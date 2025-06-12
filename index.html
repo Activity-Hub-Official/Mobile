@@ -2,7 +2,9 @@
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <!-- Disable pinch‑zoom & cover notch -->
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>Try Activity Hub</title>
 
   <!-- PWA manifest & meta -->
@@ -21,12 +23,14 @@
   />
 
   <style>
-    body {
+    /* Ensure no pinch‑zoom and notch safe‑area */
+    html, body {
+      touch-action: manipulation;
       background-color: #000;
       padding-top: env(safe-area-inset-top);
       padding-bottom: env(safe-area-inset-bottom);
     }
-    /* Sidebar off-canvas */
+    /* Sidebar off‑canvas */
     #sidebar {
       transition: transform .3s ease-in-out;
       transform: translateX(-100%);
@@ -63,10 +67,10 @@
          style="padding-top: env(safe-area-inset-top);">
       <!-- Profile Pic -->
       <img
-        id="openSidebarBtn"
         src="https://i.imgur.com/zGz4RR3.jpeg"
         alt="Profile"
         class="w-8 h-8 rounded-full object-cover cursor-pointer"
+        onclick="openSidebar()"
       />
       <!-- Search wrapper -->
       <div class="relative flex-1">
@@ -196,9 +200,9 @@
     }
 
     // Sidebar handlers
-    document.getElementById('openSidebarBtn').onclick = () => {
+    function openSidebar() {
       document.getElementById('sidebar').classList.add('open');
-    };
+    }
     function closeSidebar() {
       document.getElementById('sidebar').classList.remove('open');
     }
@@ -214,14 +218,13 @@
         document.documentElement.classList.remove('dark');
         localStorage.theme = 'light';
       }
-      // move dot
       const dot = toggle.nextElementSibling.querySelector('.dot');
       dot.classList.toggle('translate-x-4');
     });
-    // Initialize from localStorage
     if (localStorage.theme === 'light') {
       toggle.checked = false;
       document.documentElement.classList.remove('dark');
+      toggle.nextElementSibling.querySelector('.dot').classList.remove('translate-x-4');
     } else {
       toggle.checked = true;
       document.documentElement.classList.add('dark');
