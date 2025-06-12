@@ -23,27 +23,35 @@
   />
 
   <style>
-    /* Ensure no pinch‑zoom and notch safe‑area */
     html, body {
-      touch-action: manipulation;
+      height: 100%;
+      overflow: hidden;               /* disable scrolling */
+      touch-action: manipulation;     /* disable pinch-zoom */
       background-color: #000;
       padding-top: env(safe-area-inset-top);
       padding-bottom: env(safe-area-inset-bottom);
     }
     /* Sidebar off‑canvas */
     #sidebar {
-      transition: transform .3s ease-in-out;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 16rem;                   /* w-64 */
+      height: 100vh;                  /* full viewport height */
       transform: translateX(-100%);
+      transition: transform .3s ease-in-out;
+      z-index: 50;                    /* above the shell */
     }
     #sidebar.open {
       transform: translateX(0);
     }
   </style>
 </head>
-<body class="relative text-white min-h-screen overflow-hidden">
+<body class="relative text-white h-screen overflow-hidden">
 
   <!-- Sidebar -->
-  <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-gray-800 p-6 z-60">
+  <aside id="sidebar" class="bg-gray-800 p-6">
     <h2 class="text-xl font-semibold mb-4">Settings</h2>
     <div class="flex items-center justify-between mb-6">
       <span>Dark Mode</span>
@@ -59,8 +67,8 @@
     </button>
   </aside>
 
-  <!-- ==== PWA SHELL (hidden by default) ==== -->
-  <div id="pwaShell" class="hidden absolute inset-0 bg-black flex flex-col items-center justify-center z-50 p-4 text-center">
+  <!-- PWA SHELL (hidden by default) -->
+  <div id="pwaShell" class="hidden absolute inset-0 bg-black flex flex-col items-center justify-center z-40 p-4 text-center">
 
     <!-- Top bar: profile pic then search -->
     <div class="absolute top-0 left-0 right-0 flex items-center space-x-3 bg-black bg-opacity-80 p-4"
@@ -121,7 +129,7 @@
     </nav>
   </div>
 
-  <!-- ==== NORMAL CONTENT ==== -->
+  <!-- NORMAL CONTENT -->
   <div id="mainContent" class="flex flex-col items-center justify-between w-full max-w-sm mx-auto h-full p-4">
     <header class="text-center mt-8">
       <h1 class="text-3xl font-bold leading-tight">
@@ -153,8 +161,8 @@
     </footer>
   </div>
 
-  <!-- ==== “Add to Home Screen” Overlay ==== -->
-  <div id="installOverlay" class="hidden fixed inset-0 bg-black bg-opacity-90 text-white flex flex-col justify-between items-center p-6 z-40">
+  <!-- “Add to Home Screen” Overlay -->
+  <div id="installOverlay" class="hidden fixed inset-0 bg-black bg-opacity-90 text-white flex flex-col justify-between items-center p-6 z-30">
     <div class="max-w-sm text-center mt-16">
       <i class="fa-solid fa-arrow-up-from-bracket text-4xl mb-4 text-blue-400"></i>
       <h2 class="text-2xl font-semibold mb-3">Add to Home Screen</h2>
