@@ -2,11 +2,10 @@
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
-  <!-- 1. viewport-fit=cover -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Try Activity Hub</title>
 
-  <!-- PWA manifest & theming -->
+  <!-- PWA meta & manifest -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#000000" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -14,47 +13,66 @@
   <link rel="apple-touch-icon" href="https://i.imgur.com/DNoJrbI.png" />
   <link rel="icon" href="https://i.imgur.com/DNoJrbI.png" />
 
-  <!-- Tailwind & Font Awesome -->
+  <!-- Tailwind & FA -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     rel="stylesheet"
   />
 
-  <!-- 2. Safe‐area CSS -->
+  <!-- Safe‑area CSS -->
   <style>
-    html, body {
-      background-color: #000;
-    }
     body {
-      /* ensure content extends under status bar */
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
-    }
-    /* Also apply to your PWA shell overlay */
-    #pwaShell {
+      background-color: #000;
       padding-top: env(safe-area-inset-top);
       padding-bottom: env(safe-area-inset-bottom);
     }
   </style>
 </head>
-<body class="bg-gradient-to-b from-black to-gray-900 text-white min-h-screen flex items-center justify-center p-4">
+<body class="relative text-white min-h-screen overflow-hidden">
 
   <!-- ==== PWA SHELL (hidden by default) ==== -->
-  <div id="pwaShell" class="hidden absolute inset-0 bg-black text-white flex flex-col items-center justify-center z-50 p-4">
+  <div id="pwaShell" class="hidden absolute inset-0 bg-black flex flex-col items-center justify-center z-50 p-4 text-center">
+    <!-- Logo & Splash -->
     <img src="https://i.imgur.com/DNoJrbI.png" alt="Logo" class="w-24 h-24 mb-4 animate-pulse" />
     <h1 class="text-3xl font-bold mb-2">Activity Hub</h1>
     <p id="pwaMsg" class="text-lg mb-6">Loading...</p>
-    <div id="pwaIcons" class="flex space-x-4 text-2xl opacity-0 transition-opacity duration-500">
+    <div id="pwaIcons" class="flex space-x-4 text-2xl opacity-0 transition-opacity duration-500 mb-24">
       <i class="fa-brands fa-android"></i>
       <i class="fa-brands fa-apple"></i>
       <i class="fa-solid fa-wifi"></i>
     </div>
+
+    <!-- Bottom Tab Navigation -->
+    <nav 
+      class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-80 flex justify-around py-3"
+      style="padding-bottom: env(safe-area-inset-bottom)"
+    >
+      <a href="#" class="flex flex-col items-center text-gray-400 hover:text-white">
+        <i class="fa-solid fa-compass text-xl"></i>
+        <span class="text-xs mt-1">Explore</span>
+      </a>
+      <a href="#" class="flex flex-col items-center text-gray-400 hover:text-white">
+        <i class="fa-solid fa-users text-xl"></i>
+        <span class="text-xs mt-1">Clubs</span>
+      </a>
+      <a href="#" class="flex flex-col items-center text-gray-400 hover:text-white">
+        <i class="fa-solid fa-briefcase text-xl"></i>
+        <span class="text-xs mt-1">Business</span>
+      </a>
+      <a href="#" class="flex flex-col items-center text-gray-400 hover:text-white">
+        <i class="fa-solid fa-folder-open text-xl"></i>
+        <span class="text-xs mt-1">Projects</span>
+      </a>
+      <a href="#" class="flex flex-col items-center text-gray-400 hover:text-white">
+        <i class="fa-solid fa-calendar-alt text-xl"></i>
+        <span class="text-xs mt-1">Events</span>
+      </a>
+    </nav>
   </div>
 
   <!-- ==== NORMAL CONTENT ==== -->
-  <div id="mainContent" class="flex flex-col items-center justify-between w-full max-w-sm mx-auto">
-    <!-- Header -->
+  <div id="mainContent" class="flex flex-col items-center justify-between w-full max-w-sm mx-auto h-full p-4">
     <header class="text-center mt-8">
       <h1 class="text-3xl font-bold leading-tight">
         Discover, Connect, & Launch <br /> Your Campus Journey
@@ -62,7 +80,6 @@
       <p class="mt-3 text-gray-300 text-sm">Try the new mobile experience of Activity Hub</p>
     </header>
 
-    <!-- Phone Preview -->
     <div class="my-8">
       <img 
         src="https://via.placeholder.com/250x500?text=Activity+Hub+Preview" 
@@ -71,7 +88,6 @@
       />
     </div>
 
-    <!-- CTA Button -->
     <div class="w-full text-center">
       <button 
         onclick="showOverlay()" 
@@ -82,7 +98,6 @@
       <p class="mt-3 text-sm text-gray-400">No download needed. Works right in your browser.</p>
     </div>
 
-    <!-- Footer -->
     <footer class="mt-12 text-xs text-gray-500 text-center">
       &copy; 2025 Activity Hub. All rights reserved.
     </footer>
