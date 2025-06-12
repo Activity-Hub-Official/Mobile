@@ -2,10 +2,9 @@
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
-  <!-- Disable zoom & notch cover -->
   <meta name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-  <title>Try Activity Hub</title>
+  <title>Activity Hub PWA</title>
 
   <!-- PWA manifest & meta -->
   <link rel="manifest" href="manifest.json" />
@@ -15,7 +14,7 @@
   <link rel="apple-touch-icon" href="https://i.imgur.com/DNoJrbI.png" />
   <link rel="icon" href="https://i.imgur.com/DNoJrbI.png" />
 
-  <!-- Tailwind & FA -->
+  <!-- Tailwind & Font Awesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -34,22 +33,38 @@
     #sidebar {
       position: fixed;
       top: 0; left: 0; bottom: 0;
-      width: 16rem;              /* w-64 */
+      width: 16rem;
       transform: translateX(-100%);
       transition: transform .3s ease-in-out;
-      z-index: 50;
-      background: #2d3748;       /* Tailwind gray-800 */
+      z-index: 60;
+      background: #2d3748; /* gray-800 */
       padding: calc(env(safe-area-inset-top) + 1rem) 1rem 1rem;
     }
     #sidebar.open {
       transform: translateX(0);
     }
+    /* The overlay behind sidebar */
+    #sidebarOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 55;
+      display: none;
+    }
   </style>
 </head>
 <body class="relative text-white h-screen overflow-hidden">
 
+  <!-- Sidebar Overlay -->
+  <div id="sidebarOverlay" onclick="closeSidebar()"></div>
+
   <!-- Sidebar -->
   <aside id="sidebar" class="flex flex-col">
+    <!-- Profile + Name -->
+    <div class="flex items-center space-x-3 mb-6">
+      <img src="https://i.imgur.com/zGz4RR3.jpeg" alt="Profile" class="w-10 h-10 rounded-full" />
+      <p class="text-white font-medium">Saeed Khan</p>
+    </div>
     <h2 class="text-xl font-semibold mb-4">Settings</h2>
     <div class="flex items-center justify-between mb-6">
       <span>Dark Mode</span>
@@ -65,7 +80,7 @@
     </button>
   </aside>
 
-  <!-- PWA SHELL (hidden by default) -->
+  <!-- PWA Shell -->
   <div id="pwaShell" class="hidden absolute inset-0 bg-black flex flex-col items-center justify-center z-40 p-4 h-screen overflow-hidden">
 
     <!-- Top bar: profile pic + search -->
@@ -80,7 +95,7 @@
       <div class="relative flex-1">
         <input
           type="search"
-          placeholder="Search..."
+          placeholder="Search…"
           class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-white placeholder-gray-400 focus:outline-none"
         />
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -125,7 +140,7 @@
     </nav>
   </div>
 
-  <!-- NORMAL CONTENT -->
+  <!-- Normal Content -->
   <div id="mainContent" class="flex flex-col items-center justify-between w-full max-w-sm mx-auto h-screen p-4 overflow-hidden">
     <header class="text-center mt-8">
       <h1 class="text-3xl font-bold leading-tight">
@@ -157,7 +172,7 @@
     </footer>
   </div>
 
-  <!-- “Add to Home Screen” Overlay -->
+  <!-- Add to Home Screen Overlay -->
   <div id="installOverlay" class="hidden fixed inset-0 bg-black bg-opacity-90 text-white flex flex-col justify-between items-center p-6 z-30 h-screen overflow-hidden">
     <div class="max-w-sm text-center mt-16">
       <i class="fa-solid fa-arrow-up-from-bracket text-4xl mb-4 text-blue-400"></i>
@@ -176,7 +191,6 @@
     </div>
   </div>
 
-  <!-- Scripts -->
   <script>
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches
                       || window.navigator.standalone === true;
@@ -195,7 +209,7 @@
       }
     });
 
-    // Overlay handlers
+    // Install overlay
     function showOverlay() {
       document.getElementById("installOverlay").classList.remove("hidden");
     }
@@ -203,12 +217,14 @@
       document.getElementById("installOverlay").classList.add("hidden");
     }
 
-    // Sidebar handlers
+    // Sidebar control
     function openSidebar() {
       document.getElementById('sidebar').classList.add('open');
+      document.getElementById('sidebarOverlay').style.display = 'block';
     }
     function closeSidebar() {
       document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').style.display = 'none';
     }
 
     // Theme toggle
@@ -235,5 +251,6 @@
       toggle.nextElementSibling.querySelector('.dot').classList.add('translate-x-4');
     }
   </script>
+
 </body>
 </html>
