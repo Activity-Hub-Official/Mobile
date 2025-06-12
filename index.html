@@ -33,6 +33,22 @@
 
   <!-- ==== PWA SHELL (hidden by default) ==== -->
   <div id="pwaShell" class="hidden absolute inset-0 bg-black flex flex-col items-center justify-center z-50 p-4 text-center">
+
+    <!-- Top bar: search + profile pic -->
+    <div class="absolute top-0 left-0 right-0 flex items-center space-x-3 bg-black bg-opacity-80 p-4"
+         style="padding-top: env(safe-area-inset-top);">
+      <input
+        type="search"
+        placeholder="Search Activity Hub..."
+        class="flex-1 px-3 py-2 rounded-full bg-gray-800 text-white placeholder-gray-400 focus:outline-none"
+      />
+      <img
+        src="https://i.imgur.com/zGz4RR3.jpeg"
+        alt="Profile"
+        class="w-8 h-8 rounded-full object-cover"
+      />
+    </div>
+
     <!-- Logo & Splash -->
     <img src="https://i.imgur.com/DNoJrbI.png" alt="Logo" class="w-24 h-24 mb-4 animate-pulse" />
     <h1 class="text-3xl font-bold mb-2">Activity Hub</h1>
@@ -49,8 +65,8 @@
       style="padding-bottom: env(safe-area-inset-bottom)"
     >
       <a href="#" class="flex flex-col items-center text-gray-400 hover:text-white">
-        <i class="fa-solid fa-compass text-xl"></i>
-        <span class="text-xs mt-1">Explore</span>
+        <i class="fa-solid fa-home text-xl"></i>
+        <span class="text-xs mt-1">Home</span>
       </a>
       <a href="#" class="flex flex-col items-center text-gray-400 hover:text-white">
         <i class="fa-solid fa-users text-xl"></i>
@@ -58,7 +74,7 @@
       </a>
       <a href="#" class="flex flex-col items-center text-gray-400 hover:text-white">
         <i class="fa-solid fa-briefcase text-xl"></i>
-        <span class="text-xs mt-1">Business</span>
+        <span class="text-xs mt-1">Businesses</span>
       </a>
       <a href="#" class="flex flex-col items-center text-gray-400 hover:text-white">
         <i class="fa-solid fa-folder-open text-xl"></i>
