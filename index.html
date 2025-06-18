@@ -22,7 +22,6 @@
   />
 
   <style>
-    /* Disable scrolling and pinch zoom */
     html, body {
       height: 100%;
       overflow: hidden;
@@ -31,27 +30,27 @@
     }
     /* Sidebar off-canvas */
     #sidebar {
-      position: fixed;
-      top: 0; left: 0; bottom: 0;
+      position: fixed; top:0; left:0; bottom:0;
       width: 16rem;
       transform: translateX(-100%);
       transition: transform .3s ease-in-out;
       z-index: 60;
-      background: #2d3748; /* gray-800 */
-      padding: calc(env(safe-area-inset-top) + 1rem) 1rem 1rem;
-      display: flex;
-      flex-direction: column;
+      background: #2d3748;
+      padding: calc(env(safe-area-inset-top)+1rem) 1rem 1rem;
+      display: flex; flex-direction: column;
     }
-    #sidebar.open {
-      transform: translateX(0);
-    }
-    /* The overlay behind sidebar */
+    #sidebar.open { transform: translateX(0); }
     #sidebarOverlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 55;
-      display: none;
+      position: fixed; inset:0;
+      background: rgba(0,0,0,0.5); z-index:55;
+      display:none;
+    }
+    /* Listings scroll region */
+    #listings {
+      flex: 1;
+      width: 100%;
+      overflow-y: auto;
+      padding-bottom: 4rem;
     }
   </style>
 </head>
@@ -62,81 +61,47 @@
 
   <!-- Sidebar -->
   <aside id="sidebar">
-    <!-- Profile Section -->
     <div class="flex items-center space-x-3 mb-4">
-      <img src="https://i.imgur.com/zGz4RR3.jpeg" alt="Profile" class="w-10 h-10 rounded-full" />
+      <img src="https://i.imgur.com/zGz4RR3.jpeg" alt="Profile" class="w-10 h-10 rounded-full"/>
       <div class="flex-1">
         <p class="font-medium">Saeed Khan</p>
-        <button class="text-xs text-gray-400 hover:text-gray-200 mt-1" onclick="editProfile()">
-          Edit Profile
-        </button>
+        <button class="text-xs text-gray-400 hover:text-gray-200 mt-1" onclick="editProfile()">Edit Profile</button>
       </div>
     </div>
-
-    <hr class="border-gray-700 my-2" />
-
-    <!-- Activities Being Followed -->
+    <hr class="border-gray-700 my-2"/>
     <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
-      <i class="fa-solid fa-star mr-3"></i>
-      <span>Activities Being Followed</span>
+      <i class="fa-solid fa-star mr-3"></i> Activities Being Followed
     </button>
-
-    <hr class="border-gray-700 my-2" />
-
-    <!-- Your Activities (uploaded or admin) -->
+    <hr class="border-gray-700 my-2"/>
     <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
       <i class="fa-solid fa-clipboard-list mr-3"></i>
-      <span>Your Activities</span>
+      Your Activities
       <span class="ml-auto text-xs bg-blue-600 px-2 py-0.5 rounded-full">Admin</span>
     </button>
-
-    <hr class="border-gray-700 my-2" />
-
-    <!-- QR Code Sign-In -->
+    <hr class="border-gray-700 my-2"/>
     <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
-      <i class="fa-solid fa-qrcode mr-3"></i>
-      <span>QR Code Sign-In</span>
+      <i class="fa-solid fa-qrcode mr-3"></i> QR Code Sign-In
     </button>
-
-    <hr class="border-gray-700 my-2" />
-
-    <!-- Settings -->
+    <hr class="border-gray-700 my-2"/>
     <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
-      <i class="fa-solid fa-cog mr-3"></i>
-      <span>Settings</span>
+      <i class="fa-solid fa-cog mr-3"></i> Settings
     </button>
-
-    <!-- Help Center -->
     <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
-      <i class="fa-solid fa-circle-question mr-3"></i>
-      <span>Help Center</span>
+      <i class="fa-solid fa-circle-question mr-3"></i> Help Center
     </button>
-
-    <!-- Logout at bottom -->
     <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded mt-auto">
-      <i class="fa-solid fa-sign-out-alt mr-3"></i>
-      <span>Logout</span>
+      <i class="fa-solid fa-sign-out-alt mr-3"></i> Logout
     </button>
   </aside>
 
   <!-- PWA Shell -->
-  <div id="pwaShell" class="hidden absolute inset-0 bg-black flex flex-col items-center justify-center z-40 p-4 h-screen overflow-hidden">
+  <div id="pwaShell" class="hidden absolute inset-0 bg-black flex flex-col items-center justify-start z-40 p-4 h-screen overflow-hidden">
 
-    <!-- Top bar: profile pic + search + post icon -->
-    <div class="absolute top-0 left-0 right-0 flex items-center space-x-3 bg-black bg-opacity-80 p-4"
-         style="padding-top: env(safe-area-inset-top);">
-      <img
-        src="https://i.imgur.com/zGz4RR3.jpeg"
-        alt="Profile"
-        class="w-8 h-8 rounded-full object-cover cursor-pointer"
-        onclick="openSidebar()"
-      />
+    <!-- Top bar: profile pic + search + post -->
+    <div class="absolute top-0 left-0 right-0 flex items-center space-x-3 bg-black bg-opacity-80 p-4" style="padding-top: env(safe-area-inset-top);">
+      <img src="https://i.imgur.com/zGz4RR3.jpeg" alt="Profile" class="w-8 h-8 rounded-full cursor-pointer" onclick="openSidebar()"/>
       <div class="relative flex-1">
-        <input
-          type="search"
-          placeholder="Search…"
-          class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-white placeholder-gray-400 focus:outline-none"
-        />
+        <input type="search" placeholder="Search…" class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-white placeholder-gray-400 focus:outline-none"/>
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
       </div>
       <button class="text-gray-400 hover:text-white p-2">
@@ -144,92 +109,58 @@
       </button>
     </div>
 
-    <!-- Logo & Splash -->
-    <img src="https://i.imgur.com/DNoJrbI.png" alt="Logo" class="w-24 h-24 mb-4 animate-pulse" />
-    <h1 class="text-3xl font-bold mb-2">Activity Hub</h1>
-    <p id="pwaMsg" class="text-lg mb-6">Loading...</p>
-    <div id="pwaIcons" class="flex space-x-4 text-2xl opacity-0 transition-opacity duration-500 mb-24">
-      <i class="fa-brands fa-android"></i>
-      <i class="fa-brands fa-apple"></i>
-      <i class="fa-solid fa-wifi"></i>
+    <!-- Dynamic Listings -->
+    <div id="listings" class="mt-20 space-y-4 w-full max-w-md">
+      <!-- Project cards injected by JS -->
     </div>
 
-    <!-- Bottom Tab Navigation -->
-    <nav 
-      class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-80 flex justify-around py-3"
-      style="padding-bottom: env(safe-area-inset-bottom)"
-    >
+    <!-- Bottom Tabs -->
+    <nav class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-80 flex justify-around py-3" style="padding-bottom: env(safe-area-inset-bottom);">
       <a href="#" class="flex flex-col items-center text-gray-400 hover:text-white">
-        <i class="fa-solid fa-home text-xl"></i>
-        <span class="text-xs mt-1">Home</span>
+        <i class="fa-solid fa-home text-xl"></i><span class="text-xs mt-1">Home</span>
       </a>
       <a href="#" class="flex flex-col items-center text-gray-400 hover:text-white">
-        <i class="fa-solid fa-users text-xl"></i>
-        <span class="text-xs mt-1">Clubs</span>
+        <i class="fa-solid fa-users text-xl"></i><span class="text-xs mt-1">Clubs</span>
       </a>
       <a href="#" class="flex flex-col items-center text-gray-400 hover:text-white">
-        <i class="fa-solid fa-briefcase text-xl"></i>
-        <span class="text-xs mt-1">Businesses</span>
+        <i class="fa-solid fa-briefcase text-xl"></i><span class="text-xs mt-1">Businesses</span>
       </a>
       <a href="#" class="flex flex-col items-center text-gray-400 hover:text-white">
-        <i class="fa-solid fa-folder-open text-xl"></i>
-        <span class="text-xs mt-1">Projects</span>
+        <i class="fa-solid fa-folder-open text-xl"></i><span class="text-xs mt-1">Projects</span>
       </a>
       <a href="#" class="flex flex-col items-center text-gray-400 hover:text-white">
-        <i class="fa-solid fa-calendar-alt text-xl"></i>
-        <span class="text-xs mt-1">Events</span>
+        <i class="fa-solid fa-calendar-alt text-xl"></i><span class="text-xs mt-1">Events</span>
       </a>
     </nav>
   </div>
 
-  <!-- Normal Content -->
+  <!-- Fallback “Try” Page -->
   <div id="mainContent" class="flex flex-col items-center justify-between w-full max-w-sm mx-auto h-screen p-4 overflow-hidden">
     <header class="text-center mt-8">
-      <h1 class="text-3xl font-bold leading-tight">
-        Discover, Connect, & Launch <br /> Your Campus Journey
-      </h1>
+      <h1 class="text-3xl font-bold leading-tight">Discover, Connect, & Launch<br/>Your Campus Journey</h1>
       <p class="mt-3 text-gray-300 text-sm">Try the new mobile experience of Activity Hub</p>
     </header>
-
     <div class="my-8">
-      <img 
-        src="https://via.placeholder.com/250x500?text=Activity+Hub+Preview" 
-        alt="App Preview" 
-        class="rounded-xl shadow-xl max-w-[250px]"
-      />
+      <img src="https://via.placeholder.com/250x500?text=Activity+Hub+Preview" alt="Preview" class="rounded-xl shadow-xl max-w-[250px]"/>
     </div>
-
-    <div class="w-full text-center">
-      <button 
-        onclick="showOverlay()" 
-        class="bg-blue-600 hover:bg-blue-700 transition duration-200 text-white font-semibold py-3 px-6 rounded-full text-lg shadow-lg"
-      >
-        Try Activity Hub Now
-      </button>
-      <p class="mt-3 text-sm text-gray-400">No download needed. Works right in your browser.</p>
-    </div>
-
-    <footer class="mt-12 text-xs text-gray-500 text-center">
-      &copy; 2025 Activity Hub. All rights reserved.
-    </footer>
+    <button onclick="showOverlay()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full text-lg shadow-lg">
+      Try Activity Hub Now
+    </button>
+    <p class="mt-3 text-sm text-gray-400">No download needed. Works right in your browser.</p>
+    <footer class="mt-12 text-xs text-gray-500 text-center">&copy; 2025 Activity Hub</footer>
   </div>
 
-  <!-- Add to Home Screen Overlay -->
+  <!-- “Add to Home Screen” Overlay -->
   <div id="installOverlay" class="hidden fixed inset-0 bg-black bg-opacity-90 text-white flex flex-col justify-between items-center p-6 z-30 h-screen overflow-hidden">
     <div class="max-w-sm text-center mt-16">
       <i class="fa-solid fa-arrow-up-from-bracket text-4xl mb-4 text-blue-400"></i>
       <h2 class="text-2xl font-semibold mb-3">Add to Home Screen</h2>
-      <p class="text-sm mb-6 text-gray-300 leading-relaxed">
-        Tap the <i class="fa-solid fa-arrow-up-from-bracket text-lg text-white"></i> icon at the bottom of your Safari screen.<br /><br />
-        Then scroll down and tap <strong>"Add to Home Screen"</strong>, then hit <strong>Add</strong>.
+      <p class="text-sm mb-6 text-gray-300">
+        Tap the <i class="fa-solid fa-arrow-up-from-bracket text-lg"></i> icon, then “Add to Home Screen”.
       </p>
     </div>
-    <div 
-      onclick="hideOverlay()" 
-      class="cursor-pointer animate-bounce mb-8"
-      title="Close"
-    >
-      <i class="fa-solid fa-arrow-up-from-bracket text-3xl text-gray-400 hover:text-white transition-colors duration-300"></i>
+    <div onclick="hideOverlay()" class="cursor-pointer animate-bounce mb-8">
+      <i class="fa-solid fa-arrow-up-from-bracket text-3xl text-gray-400 hover:text-white"></i>
     </div>
   </div>
 
@@ -240,26 +171,31 @@
     window.addEventListener('load', () => {
       if (isStandalone) {
         document.getElementById('mainContent').classList.add('hidden');
-        const shell = document.getElementById('pwaShell');
-        const msg = document.getElementById('pwaMsg');
-        const icons = document.getElementById('pwaIcons');
-        shell.classList.remove('hidden');
-        setTimeout(() => {
-          msg.textContent = 'Coming Soon';
-          icons.classList.add('opacity-100');
-        }, 1000);
+        document.getElementById('pwaShell').classList.remove('hidden');
+        loadProjects();
       }
     });
 
-    // Install overlay
-    function showOverlay() {
-      document.getElementById("installOverlay").classList.remove("hidden");
-    }
-    function hideOverlay() {
-      document.getElementById("installOverlay").classList.add("hidden");
+    async function loadProjects() {
+      const res = await fetch('https://sheet2api.com/v1/an4oVvpQR51V/mock-data-new');
+      const projects = await res.json();
+      const container = document.getElementById('listings');
+      projects.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'bg-gray-900 rounded-lg p-4 flex space-x-4';
+        card.innerHTML = `
+          <img src="${p['Logo URL']}" alt="${p['Project Title']}" class="w-16 h-16 object-cover rounded"/>
+          <div class="flex-1">
+            <h3 class="text-white font-semibold">${p['Project Title']}</h3>
+            <p class="text-gray-400 text-sm">${p.Tagline}</p>
+            <a href="${p['Demo Link']}" target="_blank" class="inline-block mt-2 text-blue-500 text-sm hover:underline">
+              ${p['Call to Action']}
+            </a>
+          </div>`;
+        container.appendChild(card);
+      });
     }
 
-    // Sidebar control
     function openSidebar() {
       document.getElementById('sidebar').classList.add('open');
       document.getElementById('sidebarOverlay').style.display = 'block';
@@ -269,30 +205,13 @@
       document.getElementById('sidebarOverlay').style.display = 'none';
     }
 
-    // Theme toggle
-    const toggle = document.getElementById('themeToggle');
-    toggle.checked = document.documentElement.classList.contains('dark');
-    toggle.addEventListener('change', () => {
-      if (toggle.checked) {
-        document.documentElement.classList.add('dark');
-        localStorage.theme = 'dark';
-      } else {
-        document.documentElement.classList.remove('dark');
-        localStorage.theme = 'light';
-      }
-      document.querySelector('.dot').classList.toggle('translate-x-4');
-    });
-    if (localStorage.theme === 'light') {
-      toggle.checked = false;
-      document.documentElement.classList.remove('dark');
-      document.querySelector('.dot').classList.remove('translate-x-4');
-    } else {
-      toggle.checked = true;
-      document.documentElement.classList.add('dark');
-      document.querySelector('.dot').classList.add('translate-x-4');
+    function showOverlay() {
+      document.getElementById('installOverlay').classList.remove('hidden');
+    }
+    function hideOverlay() {
+      document.getElementById('installOverlay').classList.add('hidden');
     }
 
-    // Placeholder for editProfile
     function editProfile() {
       alert('Edit profile clicked');
     }
