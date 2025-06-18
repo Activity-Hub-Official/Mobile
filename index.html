@@ -22,7 +22,6 @@
   />
 
   <style>
-    /* Disable rubber-band bouncing and pinch-zoom */
     html, body {
       height: 100%;
       overflow: hidden;
@@ -54,7 +53,7 @@
       z-index: 55;
       display: none;
     }
-    /* Smooth, momentum scrolling within listings */
+    /* Listings: smooth, momentum scrolling */
     #listings {
       flex: 1;
       width: 100%;
@@ -68,6 +67,7 @@
     /* Opaque bars */
     .bar {
       background: #000;
+      z-index: 50;
     }
   </style>
 </head>
@@ -131,21 +131,21 @@
   <!-- PWA Shell -->
   <div id="pwaShell" class="hidden absolute inset-0 flex flex-col items-center justify-start z-40 h-screen overflow-hidden">
 
-    <!-- Top Bar -->
-    <div class="bar absolute top-0 left-0 right-0 flex items-center space-x-3 p-4"
+    <!-- Top Bar (fixed) -->
+    <div class="bar fixed top-0 left-0 right-0 flex items-center space-x-2 p-4"
          style="padding-top: env(safe-area-inset-top);">
-      <img
-        src="https://i.imgur.com/zGz4RR3.jpeg"
-        alt="Profile"
-        class="w-8 h-8 rounded-full cursor-pointer"
-        onclick="openSidebar()"
-      />
+      <img src="https://i.imgur.com/zGz4RR3.jpeg" alt="Profile"
+           class="w-8 h-8 rounded-full cursor-pointer" onclick="openSidebar()"/>
+      <select id="searchCategory"
+              class="bg-gray-800 text-white rounded-full px-3 py-2 text-sm focus:outline-none">
+        <option value="All">All</option>
+        <option value="Clubs & Orgs">Clubs</option>
+        <option value="Business">Businesses</option>
+        <option value="Other Projects">Projects</option>
+      </select>
       <div class="relative flex-1">
-        <input
-          type="search"
-          placeholder="Search…"
-          class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-white placeholder-gray-400 focus:outline-none"
-        />
+        <input id="searchInput" type="search" placeholder="Search…"
+               class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-white placeholder-gray-400 focus:outline-none"/>
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
       </div>
       <button class="text-gray-400 hover:text-white p-2">
@@ -154,31 +154,26 @@
     </div>
 
     <!-- Listings Container -->
-    <div id="listings" class="w-full max-w-md"></div>
+    <div id="listings" class="w-full max-w-md flex flex-col space-y-4"></div>
 
-    <!-- Bottom Tabs -->
-    <nav class="bar absolute bottom-0 left-0 right-0 flex justify-around py-3"
+    <!-- Bottom Tabs (fixed) -->
+    <nav class="bar fixed bottom-0 left-0 right-0 flex justify-around py-3"
          style="padding-bottom: env(safe-area-inset-bottom);">
       <button onclick="showHome()" class="flex flex-col items-center text-gray-400 hover:text-white">
-        <i class="fa-solid fa-home text-xl"></i>
-        <span class="text-xs mt-1">Home</span>
+        <i class="fa-solid fa-home text-xl"></i><span class="text-xs mt-1">Home</span>
       </button>
       <button onclick="showCategory('Clubs & Orgs')" class="flex flex-col items-center text-gray-400 hover:text-white">
-        <i class="fa-solid fa-users text-xl"></i>
-        <span class="text-xs mt-1">Clubs</span>
+        <i class="fa-solid fa-users text-xl"></i><span class="text-xs mt-1">Clubs</span>
       </button>
       <button onclick="showCategory('Business')" class="flex flex-col items-center text-gray-400 hover:text-white">
-        <i class="fa-solid fa-briefcase text-xl"></i>
-        <span class="text-xs mt-1">Businesses</span>
+        <i class="fa-solid fa-briefcase text-xl"></i><span class="text-xs mt-1">Businesses</span>
       </button>
       <button onclick="showCategory('Other Projects')" class="flex flex-col items-center text-gray-400 hover:text-white">
-        <i class="fa-solid fa-folder-open text-xl"></i>
-        <span class="text-xs mt-1">Projects</span>
+        <i class="fa-solid fa-folder-open text-xl"></i><span class="text-xs mt-1">Projects</span>
       </button>
-      <a href="#" class="flex flex-col items-center text-gray-400 hover:text-white">
-        <i class="fa-solid fa-calendar-alt text-xl"></i>
-        <span class="text-xs mt-1">Events</span>
-      </a>
+      <button class="flex flex-col items-center text-gray-400 hover:text-white">
+        <i class="fa-solid fa-calendar-alt text-xl"></i><span class="text-xs mt-1">Events</span>
+      </button>
     </nav>
   </div>
 
@@ -191,17 +186,13 @@
       <p class="mt-3 text-gray-300 text-sm">Try the new mobile experience of Activity Hub</p>
     </header>
     <div class="my-8">
-      <img
-        src="https://via.placeholder.com/250x500?text=Activity+Hub+Preview"
-        alt="App Preview"
-        class="rounded-xl shadow-xl max-w-[250px]"
-      />
+      <img src="https://via.placeholder.com/250x500?text=Activity+Hub+Preview"
+           alt="App Preview"
+           class="rounded-xl shadow-xl max-w-[250px]" />
     </div>
     <div class="w-full text-center">
-      <button
-        onclick="showOverlay()"
-        class="bg-blue-600 hover:bg-blue-700 transition duration-200 text-white font-semibold py-3 px-6 rounded-full text-lg shadow-lg"
-      >
+      <button onclick="showOverlay()"
+              class="bg-blue-600 hover:bg-blue-700 transition duration-200 text-white font-semibold py-3 px-6 rounded-full text-lg shadow-lg">
         Try Activity Hub Now
       </button>
       <p class="mt-3 text-sm text-gray-400">No download needed. Works right in your browser.</p>
@@ -227,11 +218,9 @@
     </div>
   </div>
 
-
   <script>
     let allProjects = [];
 
-    // Detect standalone
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches
                       || window.navigator.standalone === true;
 
@@ -239,11 +228,13 @@
       if (isStandalone) {
         document.getElementById('mainContent').classList.add('hidden');
         document.getElementById('pwaShell').classList.remove('hidden');
-        fetchProjects().then(showHome);
+        fetchProjects().then(() => {
+          showHome();
+          attachSearchHandlers();
+        });
       }
     });
 
-    // Fetch projects from API
     async function fetchProjects() {
       try {
         const res = await fetch('https://sheet2api.com/v1/an4oVvpQR51V/mock-data-new');
@@ -253,7 +244,6 @@
       }
     }
 
-    // Create a project card element
     function createCard(p) {
       const div = document.createElement('div');
       div.className = 'bg-gray-900 rounded-lg p-4 flex space-x-4';
@@ -269,7 +259,6 @@
       return div;
     }
 
-    // Show homepage with 3 per category
     function showHome() {
       const groups = [
         { title: 'Clubs', key: 'Clubs & Orgs' },
@@ -290,7 +279,6 @@
       });
     }
 
-    // Show full category list
     function showCategory(typeKey) {
       const titleMap = {
         'Clubs & Orgs': 'Clubs',
@@ -308,7 +296,33 @@
         .forEach(p => container.appendChild(createCard(p)));
     }
 
-    // Sidebar controls
+    function attachSearchHandlers() {
+      const input = document.getElementById('searchInput');
+      const dropdown = document.getElementById('searchCategory');
+      [input, dropdown].forEach(el => {
+        el.addEventListener(el === input ? 'input' : 'change', applySearchFilter);
+      });
+    }
+
+    function applySearchFilter() {
+      const term = document.getElementById('searchInput').value.trim().toLowerCase();
+      const categoryVal = document.getElementById('searchCategory').value;
+      let filtered = allProjects;
+      if (categoryVal && categoryVal !== 'All') {
+        filtered = filtered.filter(p => p['Project Type'] === categoryVal);
+      }
+      if (term) {
+        filtered = filtered.filter(p =>
+          p['Project Title'].toLowerCase().includes(term) ||
+          p.Tagline.toLowerCase().includes(term) ||
+          p.Description.toLowerCase().includes(term)
+        );
+      }
+      const container = document.getElementById('listings');
+      container.innerHTML = '';
+      filtered.forEach(p => container.appendChild(createCard(p)));
+    }
+
     function openSidebar() {
       document.getElementById('sidebar').classList.add('open');
       document.getElementById('sidebarOverlay').style.display = 'block';
@@ -318,7 +332,6 @@
       document.getElementById('sidebarOverlay').style.display = 'none';
     }
 
-    // Install overlay
     function showOverlay() {
       document.getElementById('installOverlay').classList.remove('hidden');
     }
@@ -326,7 +339,6 @@
       document.getElementById('installOverlay').classList.add('hidden');
     }
 
-    // Stub for edit profile
     function editProfile() {
       alert('Edit Profile clicked');
     }
