@@ -23,35 +23,28 @@
 
   <style>
     html, body {
-      height: 100%;
-      margin: 0;
-      overflow: hidden;
-      overscroll-behavior: none;
-      touch-action: manipulation;
-      background: #000;
+      height: 100%; margin: 0;
+      overflow: hidden; overscroll-behavior: none;
+      touch-action: manipulation; background: #000;
     }
     .bar { background: #000; z-index: 50; }
 
     /* Sidebar */
     #sidebar {
-      position: fixed;
-      top: 0; left: 0; bottom: 0;
-      width: min(80vw,16rem);
-      transform: translateX(-100%);
-      transition: transform .3s;
-      z-index: 60;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: min(80vw,16rem); transform: translateX(-100%);
+      transition: transform .3s; z-index: 60;
       background: #2d3748;
       padding: calc(env(safe-area-inset-top)+1rem) 1rem 1rem;
       display: flex; flex-direction: column;
     }
     #sidebar.open { transform: translateX(0); }
     #sidebarOverlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.5);
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
       z-index: 55; display: none;
     }
 
-    /* Main listings */
+    /* Listings */
     #listings {
       flex: 1; width: 100%; overflow-y: auto;
       scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
@@ -62,10 +55,8 @@
 
     /* Search overlay */
     #searchOverlay {
-      position: fixed; inset: 0;
-      background: #000;
-      display: none; flex-direction: column;
-      z-index: 70;
+      position: fixed; inset: 0; background: #000;
+      display: none; flex-direction: column; z-index: 70;
     }
     #searchHeader {
       display: flex; align-items: center; gap: .5rem;
@@ -77,30 +68,43 @@
       background: #111827;
     }
     #searchMenu button {
-      text-align: left;
-      padding: .75rem 1rem;
-      color: #E5E7EB;
-      background: transparent;
-      border: none;
+      text-align: left; padding: .75rem 1rem;
+      color: #E5E7EB; background: transparent; border: none;
     }
-    #searchMenu button:hover {
-      background: #374151;
-    }
+    #searchMenu button:hover { background: #374151; }
     .overlayListings {
-      flex: 1; overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+      flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
       display: flex; flex-direction: column; gap: 1rem;
       padding: 1rem 1rem calc(env(safe-area-inset-bottom)+1rem);
     }
-    /* Search‐icon button inside input */
     .search-btn {
       position: absolute; right: .75rem; top: 50%;
-      transform: translateY(-50%);
-      background: none; border: none; padding: 0;
-      color: #9CA3AF; /* gray-400 */
+      transform: translateY(-50%); background: none; border: none;
+      color: #9CA3AF;
     }
-    .search-btn:active { color: #FFF; }
+
+    /* Detail overlay */
+    #detailOverlay {
+      position: fixed; inset: 0; background: #000;
+      display: none; flex-direction: column; z-index: 80;
+    }
+    #detailHeader {
+      display: flex; align-items: center; gap: .5rem;
+      padding: calc(env(safe-area-inset-top)+1rem) 1rem 1rem;
+      background: #000; z-index: 81;
+    }
+    #detailContent {
+      flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      padding: 1rem 1rem calc(env(safe-area-inset-bottom)+1rem);
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    .socials a {
+      margin-right: .75rem;
+      color: #9CA3AF; font-size: 1.25rem;
+    }
+    .socials a:hover { color: #FFF; }
   </style>
 </head>
 <body class="relative text-white h-screen">
@@ -148,15 +152,13 @@
         <i class="fa-solid fa-arrow-left text-xl"></i>
       </button>
       <div class="relative flex-1">
-        <input
-          id="overlaySearchInput"
-          type="search"
-          placeholder="Search…"
-          enterkeyhint="search"
-          class="w-full pl-10 pr-12 py-2 rounded-full bg-gray-800 text-white focus:outline-none"
-        />
+        <input id="overlaySearchInput"
+               type="search"
+               placeholder="Search…"
+               enterkeyhint="search"
+               class="w-full pl-10 pr-12 py-2 rounded-full bg-gray-800 text-white focus:outline-none"/>
         <button class="search-btn" onclick="overlaySearch()">
-          <i class="fa-solid fa-magnifying-glass text-lg"></i>
+          <i class="fa-solid fa-magnifying-glass"></i>
         </button>
       </div>
     </div>
@@ -170,8 +172,26 @@
     <div class="overlayListings"></div>
   </div>
 
+  <!-- Detail Overlay -->
+  <div id="detailOverlay" class="hidden flex">
+    <div id="detailHeader">
+      <button onclick="closeDetail()" class="p-2 mr-2">
+        <i class="fa-solid fa-arrow-left text-xl"></i>
+      </button>
+      <h2 id="detailTitle" class="text-xl font-semibold"></h2>
+    </div>
+    <div id="detailContent">
+      <img id="detailLogo" src="" class="w-24 h-24 object-cover rounded mx-auto"/>
+      <p id="detailDesc" class="text-gray-300"></p>
+      <p id="detailMembers" class="text-gray-400"></p>
+      <div class="socials flex flex-wrap"></div>
+      <a id="detailWebsite" href="#" target="_blank" class="text-blue-500 hover:underline"></a>
+    </div>
+  </div>
+
   <!-- App Shell -->
   <div id="pwaShell" class="hidden absolute inset-0 flex flex-col h-screen">
+
     <!-- Top Bar -->
     <div class="bar fixed top-0 left-0 right-0 flex items-center space-x-2 p-4"
          style="padding-top: env(safe-area-inset-top);">
@@ -283,8 +303,7 @@
 
     async function fetchProjects() {
       try {
-        const res = await fetch('https://sheet
-2api.com/v1/an4oVvpQR51V/mock-data-new');
+        const res = await fetch('https://sheet2api.com/v1/an4oVvpQR51V/mock-data-new');
         allProjects = await res.json();
       } catch (e) {
         console.error('Fetch failed', e);
@@ -292,8 +311,7 @@
     }
 
     function attachSearchHandlers() {
-      const inp = document.getElementById('overlaySearchInput');
-      inp.addEventListener('keydown', e => {
+      document.getElementById('overlaySearchInput').addEventListener('keydown', e => {
         if (e.key === 'Enter') {
           e.preventDefault();
           overlaySearch();
@@ -303,14 +321,14 @@
 
     function createCard(p) {
       const div = document.createElement('div');
-      div.className = 'bg-gray-900 rounded-lg p-4 flex space-x-4';
+      div.className = 'bg-gray-900 rounded-lg p-4 flex space-x-4 cursor-pointer';
+      div.onclick = () => openDetail(p);
       div.innerHTML = `
         <img src="${p['Logo URL']}" class="w-16 h-16 object-cover rounded"/>
         <div class="flex-1">
           <h3 class="text-white font-semibold">${p['Project Title']}</h3>
           <p class="text-gray-400 text-sm">${p.Tagline}</p>
-          <a href="${p['Demo Link']}" target="_blank"
-             class="mt-2 text-blue-500 text-sm hover:underline inline-block">
+          <a href="#" onclick="openDetail(event, ${JSON.stringify(p)})" class="mt-2 text-blue-500 text-sm hover:underline inline-block">
             ${p['Call to Action']}
           </a>
         </div>`;
@@ -381,8 +399,8 @@
         return;
       }
       allProjects
-        .filter((p) => p['Project Type'] === typeKey)
-        .forEach((p) => c.appendChild(createCard(p)));
+        .filter(p => p['Project Type'] === typeKey)
+        .forEach(p => c.appendChild(createCard(p)));
     }
 
     function overlayPeople() {
@@ -412,15 +430,56 @@
       document.querySelector('#searchOverlay .overlayListings').innerHTML = '';
     }
 
+    function openDetail(p) {
+      document.getElementById('detailTitle').textContent = p['Project Title'];
+      document.getElementById('detailLogo').src = p['Logo URL'];
+      document.getElementById('detailDesc').textContent = p.Description;
+      document.getElementById('detailMembers').textContent = `Participants: ${p['Number of participants']}`;
+      // socials
+      const socials = document.querySelector('#detailContent .socials');
+      socials.innerHTML = '';
+      const fields = ['Instagram','LinkedIn','YouTube','TikTok','GitHub','Discord','GroupMe','Twitter'];
+      fields.forEach(key => {
+        if (p[key]) {
+          const a = document.createElement('a');
+          a.href = p[key];
+          a.target = '_blank';
+          let icon;
+          switch(key) {
+            case 'Instagram': icon = 'fa-instagram'; break;
+            case 'LinkedIn': icon = 'fa-linkedin'; break;
+            case 'YouTube': icon = 'fa-youtube'; break;
+            case 'TikTok': icon = 'fa-tiktok'; break;
+            case 'GitHub': icon = 'fa-github'; break;
+            case 'Discord': icon = 'fa-discord'; break;
+            case 'GroupMe': icon = 'fa-comment'; break;
+            case 'Twitter': icon = 'fa-twitter'; break;
+          }
+          a.innerHTML = `<i class="fa-brands ${icon}"></i>`;
+          socials.appendChild(a);
+        }
+      });
+      // website
+      const site = document.getElementById('detailWebsite');
+      if (p.Website) {
+        site.href = p.Website;
+        site.textContent = p.Website;
+        site.style.display = 'block';
+      } else site.style.display = 'none';
+
+      document.getElementById('detailOverlay').style.display = 'flex';
+    }
+    function closeDetail() {
+      document.getElementById('detailOverlay').style.display = 'none';
+    }
+
     function showOverlay() {
       document.getElementById('installOverlay').classList.remove('hidden');
     }
     function hideOverlay() {
       document.getElementById('installOverlay').classList.add('hidden');
     }
-    function editProfile() {
-      alert('Edit Profile clicked');
-    }
+    function editProfile() { alert('Edit Profile clicked'); }
   </script>
 </body>
 </html>
