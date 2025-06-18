@@ -22,7 +22,7 @@
   />
 
   <style>
-    /* Disable all scrolling */
+    /* Disable scrolling and pinch zoom */
     html, body {
       height: 100%;
       overflow: hidden;
@@ -39,6 +39,8 @@
       z-index: 60;
       background: #2d3748; /* gray-800 */
       padding: calc(env(safe-area-inset-top) + 1rem) 1rem 1rem;
+      display: flex;
+      flex-direction: column;
     }
     #sidebar.open {
       transform: translateX(0);
@@ -59,24 +61,61 @@
   <div id="sidebarOverlay" onclick="closeSidebar()"></div>
 
   <!-- Sidebar -->
-  <aside id="sidebar" class="flex flex-col">
-    <!-- Profile + Name -->
-    <div class="flex items-center space-x-3 mb-6">
+  <aside id="sidebar">
+    <!-- Profile Section -->
+    <div class="flex items-center space-x-3 mb-4">
       <img src="https://i.imgur.com/zGz4RR3.jpeg" alt="Profile" class="w-10 h-10 rounded-full" />
-      <p class="text-white font-medium">Saeed Khan</p>
+      <div class="flex-1">
+        <p class="font-medium">Saeed Khan</p>
+        <button class="text-xs text-gray-400 hover:text-gray-200 mt-1" onclick="editProfile()">
+          Edit Profile
+        </button>
+      </div>
     </div>
-    <h2 class="text-xl font-semibold mb-4">Settings</h2>
-    <div class="flex items-center justify-between mb-6">
-      <span>Dark Mode</span>
-      <label class="inline-flex items-center cursor-pointer">
-        <input id="themeToggle" type="checkbox" class="sr-only" />
-        <div class="w-10 h-6 bg-gray-600 rounded-full relative">
-          <span class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></span>
-        </div>
-      </label>
-    </div>
-    <button onclick="closeSidebar()" class="mt-4 text-sm text-gray-400 hover:text-white self-start">
-      Close
+
+    <hr class="border-gray-700 my-2" />
+
+    <!-- Activities Being Followed -->
+    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
+      <i class="fa-solid fa-star mr-3"></i>
+      <span>Activities Being Followed</span>
+    </button>
+
+    <hr class="border-gray-700 my-2" />
+
+    <!-- Your Activities (uploaded or admin) -->
+    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
+      <i class="fa-solid fa-clipboard-list mr-3"></i>
+      <span>Your Activities</span>
+      <span class="ml-auto text-xs bg-blue-600 px-2 py-0.5 rounded-full">Admin</span>
+    </button>
+
+    <hr class="border-gray-700 my-2" />
+
+    <!-- QR Code Sign-In -->
+    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
+      <i class="fa-solid fa-qrcode mr-3"></i>
+      <span>QR Code Sign-In</span>
+    </button>
+
+    <hr class="border-gray-700 my-2" />
+
+    <!-- Settings -->
+    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
+      <i class="fa-solid fa-cog mr-3"></i>
+      <span>Settings</span>
+    </button>
+
+    <!-- Help Center -->
+    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
+      <i class="fa-solid fa-circle-question mr-3"></i>
+      <span>Help Center</span>
+    </button>
+
+    <!-- Logout at bottom -->
+    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded mt-auto">
+      <i class="fa-solid fa-sign-out-alt mr-3"></i>
+      <span>Logout</span>
     </button>
   </aside>
 
@@ -86,14 +125,12 @@
     <!-- Top bar: profile pic + search + post icon -->
     <div class="absolute top-0 left-0 right-0 flex items-center space-x-3 bg-black bg-opacity-80 p-4"
          style="padding-top: env(safe-area-inset-top);">
-      <!-- Profile Pic -->
       <img
         src="https://i.imgur.com/zGz4RR3.jpeg"
         alt="Profile"
         class="w-8 h-8 rounded-full object-cover cursor-pointer"
         onclick="openSidebar()"
       />
-      <!-- Search wrapper (shrunk) -->
       <div class="relative flex-1">
         <input
           type="search"
@@ -102,7 +139,6 @@
         />
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
       </div>
-      <!-- Post Icon -->
       <button class="text-gray-400 hover:text-white p-2">
         <i class="fa-solid fa-pen-to-square text-2xl"></i>
       </button>
@@ -255,7 +291,11 @@
       document.documentElement.classList.add('dark');
       document.querySelector('.dot').classList.add('translate-x-4');
     }
-  </script>
 
+    // Placeholder for editProfile
+    function editProfile() {
+      alert('Edit profile clicked');
+    }
+  </script>
 </body>
 </html>
