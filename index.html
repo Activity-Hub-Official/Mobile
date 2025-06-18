@@ -133,6 +133,42 @@
       font-size: 1.5rem; background: none; border: none;
     }
 
+    /* Share bottom sheet */
+    #shareOverlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      display: none; align-items: flex-end; justify-content: center;
+      z-index: 90;
+    }
+    #shareContent {
+      width: 100%; max-width: 20rem;
+      background: #111827;
+      border-top-left-radius: .75rem;
+      border-top-right-radius: .75rem;
+      padding: 1rem calc(1rem + env(safe-area-inset-bottom));
+      box-sizing: border-box;
+      transform: translateY(100%);
+      animation: slideUp .3s ease-out forwards;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+    #shareContent h3 {
+      text-align: center; color: #E5E7EB; margin-bottom: .5rem;
+    }
+    .share-list {
+      display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center;
+    }
+    .share-item {
+      display: flex; flex-direction: column; align-items: center; width: 4rem;
+      text-align: center; font-size: .75rem; color: #E5E7EB; cursor: pointer;
+    }
+    .share-item i { font-size: 1.5rem; margin-bottom: .25rem; }
+    #shareClose {
+      position: absolute; top: .5rem; right: .5rem;
+      background: none; border: none; color: #E5E7EB; font-size: 1.25rem;
+    }
+
     /* Overflow modal */
     #modalOverlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.8);
@@ -243,6 +279,38 @@
       <p id="detailDesc"></p>
       <p id="detailMembers" class="text-gray-400"></p>
       <div class="socials" id="detailSocials"></div>
+    </div>
+  </div>
+
+  <!-- Share Bottom Sheet -->
+  <div id="shareOverlay" class="hidden flex">
+    <div id="shareContent">
+      <button id="shareClose" onclick="closeShare()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <h3>Share This</h3>
+      <div class="share-list">
+        <div class="share-item" onclick="shareUniversal()">
+          <i class="fa-solid fa-link" style="color:#3B82F6;"></i>
+          Copy Link
+        </div>
+        <div class="share-item" onclick="shareTo('whatsapp')">
+          <i class="fa-brands fa-whatsapp" style="color:#25D366;"></i>
+          WhatsApp
+        </div>
+        <div class="share-item" onclick="shareTo('telegram')">
+          <i class="fa-brands fa-telegram" style="color:#0088CC;"></i>
+          Telegram
+        </div>
+        <div class="share-item" onclick="shareTo('reddit')">
+          <i class="fa-brands fa-reddit" style="color:#FF4500;"></i>
+          Reddit
+        </div>
+        <div class="share-item" onclick="shareTo('instagram')">
+          <i class="fa-brands fa-instagram" style="color:#E1306C;"></i>
+          Instagram
+        </div>
+      </div>
     </div>
   </div>
 
@@ -551,6 +619,277 @@
       } else {
         prompt('Copy this link:', currentShareURL);
       }
+      // close bottom sheet if open
+      closeShare();
+    }
+
+    function openShare() {
+      document.getElementById('shareOverlay').style.display = 'flex';
+    }
+    function closeShare() {
+      document.getElementById('shareOverlay').style.display = 'none';
+    }
+
+```html
+  <!-- Try Page & Install Overlay -->
+  <div id="mainContent" class="flex flex-col items-center justify-between w-full max-w-sm mx-auto h-screen p-4">
+    <header class="text-center mt-8">
+      <h1 class="text-3xl font-bold leading-tight">
+        Discover, Connect, & Launch<br/>Your Campus Journey
+      </h1>
+      <p class="mt-3 text-gray-300 text-sm">Try the new mobile experience of Activity Hub</p>
+    </header>
+    <div class="my-8">
+      <img src="https://via.placeholder.com/250x500?text=Activity+Hub+Preview"
+           class="rounded-xl shadow-xl max-w-[250px]"/>
+    </div>
+    <div class="w-full text-center">
+      <button onclick="showOverlay()"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full shadow-lg">
+        Try Activity Hub Now
+      </button>
+      <p class="mt-3 text-sm text-gray-400">No download needed. Works right in your browser.</p>
+    </div>
+    <footer class="mt-12 text-xs text-gray-500 text-center">&copy; 2025 Activity Hub</footer>
+  </div>
+
+  <div id="installOverlay" class="hidden fixed inset-0 bg-black bg-opacity-90 text-white flex flex-col justify-between items-center p-6 z-30">
+    <div class="max-w-sm text-center mt-16">
+      <i class="fa-solid fa-arrow-up-from-bracket text-4xl mb-4 text-blue-400"></i>
+      <h2 class="text-2xl font-semibold mb-3">Add to Home Screen</h2>
+      <p class="text-sm mb-6 text-gray-300 leading-relaxed">
+        Tap the <i class="fa-solid fa-arrow-up-from-bracket text-lg text-white"></i> icon at the bottom of your Safari screen.<br/><br/>
+        Then scroll down and tap <strong>"Add to Home Screen"</strong>, then hit <strong>Add</strong>.
+      </p>
+    </div>
+    <div onclick="hideOverlay()" class="cursor-pointer animate-bounce mb-8">
+      <i class="fa-solid fa-arrow-up-from-bracket text-3xl text-gray-400 hover:text-white"></i>
+    </div>
+  </div>
+
+  <!-- Script -->
+  <script>
+    let allProjects = [];
+    let currentShareURL = '';
+    let currentShareTitle = '';
+
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone === true;
+
+    window.addEventListener('load', () => {
+      if (isStandalone) {
+        document.getElementById('mainContent').classList.add('hidden');
+        document.getElementById('pwaShell').classList.remove('hidden');
+        fetchProjects().then(() => { showHome(); attachSearchHandlers(); });
+      }
+    });
+
+    async function fetchProjects() {
+      try {
+        const res = await fetch('https://sheet2api.com/v1/an4oVvpQR51V/mock-data-new');
+        allProjects = await res.json();
+      } catch (e) { console.error(e); }
+    }
+
+    function attachSearchHandlers() {
+      document.getElementById('overlaySearchInput').addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); overlaySearch(); }
+      });
+    }
+
+    function createCard(p) {
+      const div = document.createElement('div');
+      div.className = 'bg-gray-900 rounded-lg p-4 flex space-x-4 cursor-pointer';
+      div.onclick = () => openDetail(p);
+      div.innerHTML = `
+        <img src="${p['Logo URL']}" class="w-16 h-16 object-cover rounded"/>
+        <div class="flex-1">
+          <h3 class="text-white font-semibold">${p['Project Title']}</h3>
+          <p class="text-gray-400 text-sm">${p.Tagline}</p>
+        </div>`;
+      return div;
+    }
+
+    function showHome() {
+      const groups = [
+        { title: 'Clubs', key: 'Clubs & Orgs' },
+        { title: 'Businesses', key: 'Business' },
+        { title: 'Projects', key: 'Other Projects' }
+      ];
+      const c = document.getElementById('listings');
+      c.innerHTML = '';
+      groups.forEach(g => {
+        const h = document.createElement('h2');
+        h.className = 'text-xl font-bold mt-4 mb-2 px-1';
+        h.textContent = g.title;
+        c.appendChild(h);
+        allProjects
+          .filter(p => p['Project Type'] === g.key)
+          .slice(0,3)
+          .forEach(p => c.appendChild(createCard(p)));
+      });
+    }
+
+    function showCategory(typeKey) {
+      const map = {
+        'Clubs & Orgs':'Clubs','Business':'Businesses',
+        'Other Projects':'Projects','Event':'Events'
+      };
+      const c = document.getElementById('listings');
+      c.innerHTML = '';
+      const h = document.createElement('h2');
+      h.className = 'text-xl font-bold mt-4 mb-2 px-1';
+      h.textContent = map[typeKey]||typeKey;
+      c.appendChild(h);
+      allProjects
+        .filter(p=>p['Project Type']===typeKey)
+        .forEach(p=>c.appendChild(createCard(p)));
+    }
+
+    function overlaySearch() {
+      const term = document.getElementById('overlaySearchInput').value.trim();
+      document.getElementById('searchMenu').style.display = 'none';
+      const c = document.querySelector('#searchOverlay .overlayListings');
+      c.innerHTML = '';
+      if (!term) return;
+      const t = term.toLowerCase();
+      allProjects
+        .filter(p =>
+          p['Project Title'].toLowerCase().includes(t) ||
+          p.Tagline.toLowerCase().includes(t) ||
+          p.Description.toLowerCase().includes(t)
+        )
+        .forEach(p => c.appendChild(createCard(p)));
+    }
+
+    function overlayCategory(typeKey) {
+      document.getElementById('searchMenu').style.display = 'none';
+      document.getElementById('overlaySearchInput').value = '';
+      const c = document.querySelector('#searchOverlay .overlayListings');
+      c.innerHTML = '';
+      allProjects
+        .filter(p => p['Project Type'] === typeKey)
+        .forEach(p => c.appendChild(createCard(p)));
+    }
+
+    function overlayPeople() {
+      document.getElementById('searchMenu').style.display = 'none';
+      document.getElementById('overlaySearchInput').value = '';
+      const c = document.querySelector('#searchOverlay .overlayListings');
+      c.innerHTML = '<p class="text-gray-400 p-4">People search not implemented.</p>';
+    }
+
+    function openSidebar() {
+      document.getElementById('sidebar').classList.add('open');
+      document.getElementById('sidebarOverlay').style.display = 'block';
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').style.display = 'none';
+    }
+
+    function openSearchOverlay() {
+      document.getElementById('searchOverlay').style.display = 'flex';
+      document.getElementById('overlaySearchInput').focus();
+      document.getElementById('searchMenu').style.display = 'flex';
+      document.querySelector('.overlayListings').innerHTML = '';
+    }
+    function closeSearchOverlay() {
+      document.getElementById('searchOverlay').style.display = 'none';
+      document.getElementById('overlaySearchInput').value = '';
+      document.querySelector('#searchOverlay .overlayListings').innerHTML = '';
+    }
+
+    function openDetail(p) {
+      document.getElementById('detailTitle').textContent = p['Project Title'];
+      document.getElementById('detailTitle2').textContent = p['Project Title'];
+      document.getElementById('detailSchool').textContent = p['College or University Name'];
+      document.getElementById('detailLogo').src = p['Logo URL'];
+      document.getElementById('detailDesc').textContent = p.Description;
+      document.getElementById('detailMembers').textContent =
+        `Participants: ${p['Number of participants']}`;
+
+      currentShareURL  = p.Website || window.location.href;
+      currentShareTitle = p['Project Title'];
+
+      const tagsEl = document.getElementById('detailTags');
+      tagsEl.innerHTML = '';
+      const tagData = [
+        { key: p['Project Type'], cls: 'type', icon: 'fa-users' },
+        { key: p['Business Type'], cls: 'business', icon: 'fa-briefcase' },
+        { key: p.Industry, cls: 'industry', icon: 'fa-industry' },
+        { key: p.Stage, cls: 'stage', icon: 'fa-flag' }
+      ];
+      tagData.forEach(t => {
+        if (t.key) {
+          const span = document.createElement('span');
+          span.className = `tag ${t.cls}`;
+          span.innerHTML = `<i class="fa-solid ${t.icon}"></i> ${t.key}`;
+          tagsEl.appendChild(span);
+        }
+      });
+
+      const socialsEl = document.getElementById('detailSocials');
+      socialsEl.innerHTML = '';
+      const linkKeys = ['Website','Instagram','LinkedIn','YouTube','TikTok','GitHub','Discord','GroupMe','Twitter'];
+      const entries = [];
+      if (p.Website) entries.push({ key: 'Website', url: p.Website });
+      linkKeys.slice(1).forEach(key => {
+        if (p[key]) entries.push({ key, url: p[key] });
+      });
+      const iconMap = {
+        Website: 'fa-globe', Instagram: 'fa-instagram', LinkedIn: 'fa-linkedin',
+        YouTube: 'fa-youtube', TikTok: 'fa-tiktok', GitHub: 'fa-github',
+        Discord: 'fa-discord', GroupMe: 'fa-comment', Twitter: 'fa-twitter'
+      };
+      const colorMap = {
+        Website: '#3B82F6', Instagram: '#E1306C', LinkedIn: '#0077B5',
+        YouTube: '#FF0000', TikTok: '#000000', GitHub: '#181717',
+        Discord: '#7289DA', GroupMe: '#00C300', Twitter: '#1DA1F2'
+      };
+      entries.slice(0,4).forEach(e => {
+        const a = document.createElement('a');
+        a.href = e.url; a.target = '_blank';
+        const prefix = e.key === 'Website' ? 'fa-solid' : 'fa-brands';
+        a.innerHTML = `<i class="${prefix} ${iconMap[e.key]}" style="color:${colorMap[e.key]}"></i>`;
+        socialsEl.appendChild(a);
+      });
+      if (entries.length > 4) {
+        const more = document.createElement('button');
+        more.textContent = `+${entries.length - 4} more`;
+        more.onclick = () => openModal(entries);
+        socialsEl.appendChild(more);
+      }
+
+      document.getElementById('detailOverlay').style.display = 'flex';
+    }
+
+    function closeDetail() {
+      document.getElementById('detailOverlay').style.display = 'none';
+    }
+
+    function shareUniversal() {
+      if (navigator.share) {
+        navigator.share({
+          title: currentShareTitle,
+          url: currentShareURL
+        }).catch(err => console.error('Share failed:', err));
+      } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(currentShareURL)
+          .then(() => alert('Link copied to clipboard'))
+          .catch(err => console.error('Copy failed:', err));
+      } else {
+        prompt('Copy this link:', currentShareURL);
+      }
+      closeShare();
+    }
+
+    function openShare() {
+      document.getElementById('shareOverlay').style.display = 'flex';
+    }
+    function closeShare() {
+      document.getElementById('shareOverlay').style.display = 'none';
     }
 
     function openModal(entries) {
@@ -582,14 +921,15 @@
       document.getElementById('modalOverlay').style.display = 'none';
     }
 
+    function editProfile() {
+      alert('Edit Profile clicked');
+    }
+
     function showOverlay() {
       document.getElementById('installOverlay').classList.remove('hidden');
     }
     function hideOverlay() {
       document.getElementById('installOverlay').classList.add('hidden');
-    }
-    function editProfile() {
-      alert('Edit Profile clicked');
     }
   </script>
 </body>
