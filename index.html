@@ -29,7 +29,7 @@
       touch-action: manipulation;
       background: #000;
     }
-    /* Sidebar off‑canvas */
+    /* Sidebar off-canvas */
     #sidebar {
       position: fixed;
       top: 0; left: 0; bottom: 0;
@@ -63,7 +63,7 @@
     <!-- Profile + Name -->
     <div class="flex items-center space-x-3 mb-6">
       <img src="https://i.imgur.com/zGz4RR3.jpeg" alt="Profile" class="w-10 h-10 rounded-full" />
-      <p class="text-white font-medium">Saeed Khan</p>
+      <p class="text-white font-medium">Saeed Khan</p>
     </div>
     <h2 class="text-xl font-semibold mb-4">Settings</h2>
     <div class="flex items-center justify-between mb-6">
@@ -83,15 +83,17 @@
   <!-- PWA Shell -->
   <div id="pwaShell" class="hidden absolute inset-0 bg-black flex flex-col items-center justify-center z-40 p-4 h-screen overflow-hidden">
 
-    <!-- Top bar: profile pic + search -->
+    <!-- Top bar: profile pic + search + post icon -->
     <div class="absolute top-0 left-0 right-0 flex items-center space-x-3 bg-black bg-opacity-80 p-4"
          style="padding-top: env(safe-area-inset-top);">
+      <!-- Profile Pic -->
       <img
         src="https://i.imgur.com/zGz4RR3.jpeg"
         alt="Profile"
         class="w-8 h-8 rounded-full object-cover cursor-pointer"
         onclick="openSidebar()"
       />
+      <!-- Search wrapper (shrunk) -->
       <div class="relative flex-1">
         <input
           type="search"
@@ -100,6 +102,10 @@
         />
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
       </div>
+      <!-- Post Icon -->
+      <button class="text-gray-400 hover:text-white p-2">
+        <i class="fa-solid fa-pen-to-square text-2xl"></i>
+      </button>
     </div>
 
     <!-- Logo & Splash -->
@@ -238,17 +244,16 @@
         document.documentElement.classList.remove('dark');
         localStorage.theme = 'light';
       }
-      const dot = toggle.nextElementSibling.querySelector('.dot');
-      dot.classList.toggle('translate-x-4');
+      document.querySelector('.dot').classList.toggle('translate-x-4');
     });
     if (localStorage.theme === 'light') {
       toggle.checked = false;
       document.documentElement.classList.remove('dark');
-      toggle.nextElementSibling.querySelector('.dot').classList.remove('translate-x-4');
+      document.querySelector('.dot').classList.remove('translate-x-4');
     } else {
       toggle.checked = true;
       document.documentElement.classList.add('dark');
-      toggle.nextElementSibling.querySelector('.dot').classList.add('translate-x-4');
+      document.querySelector('.dot').classList.add('translate-x-4');
     }
   </script>
 
