@@ -2,7 +2,8 @@
 <html lang="en" class="dark">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
   <title>Activity Hub PWA</title>
 
   <!-- PWA manifest & meta -->
@@ -15,27 +16,36 @@
 
   <!-- Tailwind & Font Awesome -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    rel="stylesheet"
+  />
 
   <style>
     html, body {
-      height: 100%; margin: 0;
-      overflow: hidden; overscroll-behavior: none;
-      touch-action: manipulation; background: #000;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      overscroll-behavior: none;
+      touch-action: manipulation;
+      background: #000;
     }
     .bar { background: #000; z-index: 50; }
 
     /* Sidebar */
     #sidebar {
-      position: fixed; top: 0; left: 0; bottom: 0;
+      position: fixed;
+      top: env(safe-area-inset-top);
+      left: 0;
+      bottom: 0;
       width: min(80vw,16rem);
       transform: translateX(-100%);
       transition: transform .3s;
       z-index: 60;
       background: #2d3748;
-      padding: calc(env(safe-area-inset-top)+1rem) 1rem 1rem;
-      display: flex; flex-direction: column;
+      padding: 1rem;
       box-sizing: border-box;
+      display: flex; flex-direction: column;
     }
     #sidebar.open { transform: translateX(0); }
     #sidebarOverlay {
@@ -44,31 +54,35 @@
       z-index: 55; display: none;
     }
 
-    /* Listings */
+    /* App shell listings */
     #listings {
-      flex: 1; width: 100%; overflow-y: auto;
-      scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
+      flex: 1;
+      width: 100%;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
-      margin-top: 4rem; padding: 0 1rem 4rem;
+      margin-top: 4rem;
+      padding: 0 1rem 4rem;
       display: flex; flex-direction: column; gap: 1rem;
     }
 
     /* Search overlay */
     #searchOverlay {
-      position: fixed; inset: 0; background: #000;
-      display: none; flex-direction: column; z-index: 70;
+      position: fixed; inset: 0;
+      background: #000;
+      display: none; flex-direction: column;
+      z-index: 70;
     }
     #searchHeader {
-      position: fixed; top: 0; left: 0; right: 0;
+      position: fixed;
+      top: 0; left: 0; right: 0;
       display: flex; align-items: center; gap: .5rem;
-      padding: calc(env(safe-area-inset-top)+1rem) 1rem 1rem;
+      padding: env(safe-area-inset-top) 1rem 1rem;
       background: #000; z-index: 71;
     }
     #searchMenu {
-      position: fixed;
-      top: calc(env(safe-area-inset-top)+3.5rem);
-      left: 0; right: 0;
-      background: #111827; z-index: 72;
+      margin-top: calc(env(safe-area-inset-top) + 3.5rem);
+      background: #111827;
       display: flex; flex-direction: column;
     }
     #searchMenu button {
@@ -77,18 +91,18 @@
     }
     #searchMenu button:hover { background: #374151; }
     .overlayListings {
-      position: fixed;
-      top: calc(env(safe-area-inset-top)+3.5rem + (5 * 2rem));
+      position: absolute;
+      top: calc(env(safe-area-inset-top) + 3.5rem + 5 * 2.5rem / 6); /* adjust if menu height changes */
       bottom: 0; left: 0; right: 0;
       overflow-y: auto; -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
+      padding: 1rem;
       display: flex; flex-direction: column; gap: 1rem;
-      padding: 1rem 1rem calc(env(safe-area-inset-bottom)+1rem);
     }
     .search-btn {
       position: absolute; right: .75rem; top: 50%;
       transform: translateY(-50%); background: none; border: none;
-      color: #9CA3AF; font-size: 1rem;
+      color: #9CA3AF;
     }
 
     /* Detail overlay */
@@ -97,45 +111,41 @@
       display: none; flex-direction: column; z-index: 80;
     }
     #detailHeader {
-      position: fixed; top: 0; left: 0; right: 0;
+      position: fixed;
+      top: 0; left: 0; right: 0;
       display: flex; align-items: center; gap: .5rem;
-      padding: calc(env(safe-area-inset-top)+1rem) 1rem 1rem;
+      padding: env(safe-area-inset-top) 1rem 1rem;
       background: #000; z-index: 81;
     }
     #detailContent {
-      position: fixed;
-      top: calc(env(safe-area-inset-top)+3.5rem);
-      bottom: 0; left: 0; right: 0;
-      overflow-y: auto; -webkit-overflow-scrolling: touch;
-      overscroll-behavior: contain;
-      padding: 1rem 1rem calc(env(safe-area-inset-bottom)+1rem);
-      display: flex; flex-direction: column; gap: 1rem;
+      margin-top: calc(env(safe-area-inset-top) + 3.5rem);
+      flex: 1; overflow-y: auto;
+      -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+      padding: 1rem;
+      display: flex; flex-direction: column; gap: 1.5rem;
     }
-    .tags { display: flex; flex-wrap: wrap; gap: .5rem; }
-    .tag { padding: .25rem .5rem; border-radius: .25rem; font-size: .75rem; }
-    .socials { display: flex; align-items: center; gap: .75rem; }
-    .socials i { font-size: 1.25rem; color: #9CA3AF; cursor: pointer; }
-    .socials i:hover { color: #FFF; }
-    #moreLinks { color: #9CA3AF; cursor: pointer; font-size: .875rem; }
-    #linkModal {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.75);
-      display: none; align-items: center; justify-content: center; z-index: 90;
+    #detailContent img {
+      width: 6rem; height: 6rem; object-fit: cover;
+      border-radius: .5rem; margin: 0 auto;
     }
-    #linkModal .content {
-      background: #1F2937; padding: 1rem; border-radius: .5rem;
-      width: 90%; max-width: 20rem; color: #E5E7EB;
+    #detailContent h3 {
+      font-size: 1.25rem; font-weight: 600; text-align: center;
     }
-    #linkModal .content h3 { margin-bottom: .5rem; }
-    #linkModal .content ul { list-style: none; padding: 0; }
-    #linkModal .content li { margin-bottom: .5rem; }
-    #linkModal .content a { color: #3B82F6; text-decoration: underline; }
-    #linkModal .close { margin-top: 1rem; text-align: right; }
-    #linkModal .close button { color: #9CA3AF; }
+    #detailContent p { line-height: 1.5; color: #D1D5DB; }
+    .socials a {
+      margin-right: 1rem;
+      font-size: 1.5rem; color: #9CA3AF;
+    }
+    .socials a:hover { color: #FFF; }
+    #detailWebsite {
+      color: #3B82F6; text-align: center;
+      font-weight: 500;
+    }
   </style>
 </head>
 <body class="relative text-white h-screen">
 
-  <!-- Sidebar & backdrop -->
+  <!-- Sidebar + backdrop -->
   <div id="sidebarOverlay" onclick="closeSidebar()"></div>
   <aside id="sidebar">
     <div class="flex items-center mb-4 space-x-3">
@@ -146,28 +156,45 @@
       </div>
     </div>
     <hr class="border-gray-700 my-2"/>
-    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded"><i class="fa-solid fa-star mr-3"></i>Activities Being Followed</button>
+    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
+      <i class="fa-solid fa-star mr-3"></i>Activities Being Followed
+    </button>
     <hr class="border-gray-700 my-2"/>
     <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
       <i class="fa-solid fa-clipboard-list mr-3"></i>Your Activities
       <span class="ml-auto text-xs bg-blue-600 px-2 py-0.5 rounded-full">Admin</span>
     </button>
     <hr class="border-gray-700 my-2"/>
-    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded"><i class="fa-solid fa-qrcode mr-3"></i>QR Code Sign-In</button>
+    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
+      <i class="fa-solid fa-qrcode mr-3"></i>QR Code Sign-In
+    </button>
     <hr class="border-gray-700 my-2"/>
-    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded"><i class="fa-solid fa-cog mr-3"></i>Settings</button>
-    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded"><i class="fa-solid fa-circle-question mr-3"></i>Help Center</button>
-    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded mt-auto"><i class="fa-solid fa-sign-out-alt mr-3"></i>Logout</button>
+    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
+      <i class="fa-solid fa-cog mr-3"></i>Settings
+    </button>
+    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
+      <i class="fa-solid fa-circle-question mr-3"></i>Help Center
+    </button>
+    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded mt-auto">
+      <i class="fa-solid fa-sign-out-alt mr-3"></i>Logout
+    </button>
   </aside>
 
   <!-- Search Overlay -->
   <div id="searchOverlay" class="hidden flex">
     <div id="searchHeader">
-      <button onclick="closeSearchOverlay()" class="p-2 mr-2"><i class="fa-solid fa-arrow-left text-xl"></i></button>
+      <button onclick="closeSearchOverlay()" class="p-2 mr-2">
+        <i class="fa-solid fa-arrow-left text-xl"></i>
+      </button>
       <div class="relative flex-1">
-        <input id="overlaySearchInput" type="search" placeholder="Search…" enterkeyhint="search"
+        <input id="overlaySearchInput"
+               type="search"
+               placeholder="Search…"
+               enterkeyhint="search"
                class="w-full pl-10 pr-12 py-2 rounded-full bg-gray-800 text-white focus:outline-none"/>
-        <button class="search-btn" onclick="overlaySearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
+        <button class="search-btn" onclick="overlaySearch()">
+          <i class="fa-solid fa-magnifying-glass text-lg"></i>
+        </button>
       </div>
     </div>
     <div id="searchMenu">
@@ -183,68 +210,147 @@
   <!-- Detail Overlay -->
   <div id="detailOverlay" class="hidden flex">
     <div id="detailHeader">
-      <button onclick="closeDetail()" class="p-2 mr-2"><i class="fa-solid fa-arrow-left text-xl"></i></button>
+      <button onclick="closeDetail()" class="p-2 mr-2">
+        <i class="fa-solid fa-arrow-left text-xl"></i>
+      </button>
       <h2 id="detailTitle" class="text-xl font-semibold"></h2>
     </div>
     <div id="detailContent">
-      <img id="detailLogo" src="" class="w-24 h-24 object-cover rounded mx-auto"/>
-      <div class="tags" id="detailTags"></div>
-      <p id="detailDesc" class="text-gray-300"></p>
+      <img id="detailLogo" src="" alt="Logo"/>
+      <h3 id="detailTitle2"></h3>
+      <p id="detailDesc"></p>
       <p id="detailMembers" class="text-gray-400"></p>
-      <p id="detailSchool" class="text-gray-400 italic"></p>
-      <div class="socials" id="detailSocials"></div>
-      <span id="moreLinks" onclick="openModal()">+0 more</span>
-      <a id="detailWebsite" href="#" target="_blank" class="text-blue-500 hover:underline flex items-center gap-1">
-        <i class="fa-solid fa-globe"></i><span>Website</span>
-      </a>
-    </div>
-  </div>
-
-  <!-- Link Modal -->
-  <div id="linkModal" class="hidden flex">
-    <div class="content">
-      <h3>All Links</h3>
-      <ul id="modalLinkList"></ul>
-      <div class="close"><button onclick="closeModal()">Close</button></div>
+      <div class="socials flex flex-wrap"></div>
+      <a id="detailWebsite" href="#" target="_blank"></a>
     </div>
   </div>
 
   <!-- App Shell -->
   <div id="pwaShell" class="hidden absolute inset-0 flex flex-col h-screen">
-    <div class="bar fixed top-0 left-0 right-0 flex items-center gap-2 p-4" style="padding-top: env(safe-area-inset-top)">
-      <img src="https://i.imgur.com/zGz4RR3.jpeg" class="w-8 h-8 rounded-full cursor-pointer" onclick="openSidebar()"/>
+    <!-- Top Bar -->
+    <div class="bar fixed top-0 left-0 right-0 flex items-center space-x-2 p-4"
+         style="padding-top: env(safe-area-inset-top)">
+      <img
+        src="https://i.imgur.com/zGz4RR3.jpeg"
+        class="w-8 h-8 rounded-full cursor-pointer"
+        onclick="openSidebar()"
+      />
       <div class="relative flex-1">
-        <input readonly placeholder="Search…" class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-gray-400 cursor-text" onclick="openSearchOverlay()"/>
+        <input
+          readonly
+          placeholder="Search…"
+          class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-gray-400 cursor-text"
+          onclick="openSearchOverlay()"
+        />
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600"></i>
       </div>
-      <button class="text-gray-400 hover:text-white p-2"><i class="fa-solid fa-pen-to-square text-2xl"></i></button>
+      <button class="text-gray-400 hover:text-white p-2">
+        <i class="fa-solid fa-pen-to-square text-2xl"></i>
+      </button>
     </div>
+
+    <!-- Listings -->
     <div id="listings" class="w-full max-w-md mx-auto"></div>
-    <!-- Bottom Tabs... (omitted for brevity) -->
+
+    <!-- Bottom Tabs -->
+    <nav class="bar fixed bottom-0 left-0 right-0 flex justify-around py-3"
+         style="padding-bottom: env(safe-area-inset-bottom);">
+      <button onclick="showHome()" class="flex flex-col items-center text-gray-400 hover:text-white">
+        <i class="fa-solid fa-home text-xl"></i><span class="text-xs mt-1">Home</span>
+      </button>
+      <button onclick="showCategory('Clubs & Orgs')" class="flex flex-col items-center text-gray-400 hover:text-white">
+        <i class="fa-solid fa-users text-xl"></i><span class="text-xs mt-1">Clubs</span>
+      </button>
+      <button onclick="showCategory('Business')" class="flex flex-col items-center text-gray-400 hover:text-white">
+        <i class="fa-solid fa-briefcase text-xl"></i><span class="text-xs mt-1">Businesses</span>
+      </button>
+      <button onclick="showCategory('Other Projects')" class="flex flex-col items-center text-gray-400 hover:text-white">
+        <i class="fa-solid fa-folder-open text-xl"></i><span class="text-xs mt-1">Projects</span>
+      </button>
+      <button onclick="showCategory('Event')" class="flex flex-col items-center text-gray-400 hover:text-white">
+        <i class="fa-solid fa-calendar-alt text-xl"></i><span class="text-xs mt-1">Events</span>
+      </button>
+    </nav>
   </div>
 
-  <!-- Try Page & Add-to-Home Screen Overlay omitted for brevity -->
+  <!-- Fallback “Try” Page -->
+  <div id="mainContent" class="flex flex-col items-center justify-between w-full max-w-sm mx-auto h-screen p-4">
+    <header class="text-center mt-8">
+      <h1 class="text-3xl font-bold leading-tight">
+        Discover, Connect, & Launch<br/>Your Campus Journey
+      </h1>
+      <p class="mt-3 text-gray-300 text-sm">Try the new mobile experience of Activity Hub</p>
+    </header>
+    <div class="my-8">
+      <img
+        src="https://via.placeholder.com/250x500?text=Activity+Hub+Preview"
+        class="rounded-xl shadow-xl max-w-[250px]"
+      />
+    </div>
+    <div class="w-full text-center">
+      <button
+        onclick="showOverlay()"
+        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full shadow-lg"
+      >
+        Try Activity Hub Now
+      </button>
+      <p class="mt-3 text-sm text-gray-400">No download needed. Works right in your browser.</p>
+    </div>
+    <footer class="mt-12 text-xs text-gray-500 text-center">&copy; 2025 Activity Hub</footer>
+  </div>
+
+  <!-- Add to Home Screen Overlay -->
+  <div
+    id="installOverlay"
+    class="hidden fixed inset-0 bg-black bg-opacity-90 text-white flex flex-col justify-between items-center p-6 z-30"
+  >
+    <div class="max-w-sm text-center mt-16">
+      <i class="fa-solid fa-arrow-up-from-bracket text-4xl mb-4 text-blue-400"></i>
+      <h2 class="text-2xl font-semibold mb-3">Add to Home Screen</h2>
+      <p class="text-sm mb-6 text-gray-300 leading-relaxed">
+        Tap the <i class="fa-solid fa-arrow-up-from-bracket text-lg text-white"></i> icon at the bottom of
+        your Safari screen.<br/><br/>Then scroll down and tap <strong>"Add to Home Screen"</strong>, then hit
+        <strong>Add</strong>.
+      </p>
+    </div>
+    <div onclick="hideOverlay()" class="cursor-pointer animate-bounce mb-8">
+      <i class="fa-solid fa-arrow-up-from-bracket text-3xl text-gray-400 hover:text-white"></i>
+    </div>
+  </div>
 
   <script>
-    let allProjects = [], currentDetail = null;
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    let allProjects = [];
+
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone === true;
 
     window.addEventListener('load', () => {
       if (isStandalone) {
         document.getElementById('mainContent').classList.add('hidden');
         document.getElementById('pwaShell').classList.remove('hidden');
-        fetchProjects().then(() => { showHome(); attachSearchHandlers(); });
+        fetchProjects().then(() => {
+          showHome();
+          attachSearchHandlers();
+        });
       }
     });
 
     async function fetchProjects() {
-      const res = await fetch('https://sheet2api.com/v1/an4oVvpQR51V/mock-data-new');
-      allProjects = await res.json();
+      try {
+        const res = await fetch('https://sheet2api.com/v1/an4oVvpQR51V/mock-data-new');
+        allProjects = await res.json();
+      } catch (e) {
+        console.error('Fetch failed', e);
+      }
     }
 
     function attachSearchHandlers() {
       document.getElementById('overlaySearchInput').addEventListener('keydown', e => {
-        if (e.key === 'Enter') { e.preventDefault(); overlaySearch(); }
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          overlaySearch();
+        }
       });
     }
 
@@ -263,126 +369,146 @@
 
     function showHome() {
       const groups = [
-        { title:'Clubs', key:'Clubs & Orgs' },
-        { title:'Businesses', key:'Business' },
-        { title:'Projects', key:'Other Projects' }
+        { title: 'Clubs', key: 'Clubs & Orgs' },
+        { title: 'Businesses', key: 'Business' },
+        { title: 'Projects', key: 'Other Projects' }
       ];
-      const c = document.getElementById('listings'); c.innerHTML = '';
+      const c = document.getElementById('listings');
+      c.innerHTML = '';
       groups.forEach(g => {
         const h = document.createElement('h2');
-        h.className = 'text-xl font-bold mt-4 mb-2'; h.textContent = g.title;
+        h.className = 'text-xl font-bold mt-4 mb-2 px-1';
+        h.textContent = g.title;
         c.appendChild(h);
-        allProjects.filter(p => p['Project Type']===g.key).slice(0,3)
-                   .forEach(p => c.appendChild(createCard(p)));
+        allProjects
+          .filter(p => p['Project Type'] === g.key)
+          .slice(0, 3)
+          .forEach(p => c.appendChild(createCard(p)));
       });
     }
 
     function showCategory(typeKey) {
-      const map = {'Clubs & Orgs':'Clubs','Business':'Businesses','Other Projects':'Projects','Event':'Events'};
-      const c = document.getElementById('listings'); c.innerHTML = '';
+      const map = {
+        'Clubs & Orgs': 'Clubs',
+        Business: 'Businesses',
+        'Other Projects': 'Projects',
+        Event: 'Events'
+      };
+      const c = document.getElementById('listings');
+      c.innerHTML = '';
       const h = document.createElement('h2');
-      h.className = 'text-xl font-bold mt-4 mb-2'; h.textContent = map[typeKey]||typeKey;
+      h.className = 'text-xl font-bold mt-4 mb-2 px-1';
+      h.textContent = map[typeKey] || typeKey;
       c.appendChild(h);
-      allProjects.filter(p=>p['Project Type']===typeKey)
-                 .forEach(p=>c.appendChild(createCard(p)));
+      allProjects
+        .filter(p => p['Project Type'] === typeKey)
+        .forEach(p => c.appendChild(createCard(p)));
     }
 
     function overlaySearch() {
       const term = document.getElementById('overlaySearchInput').value.trim();
-      document.getElementById('searchMenu').style.display='none';
-      const c = document.querySelector('.overlayListings'); c.innerHTML='';
+      document.getElementById('searchMenu').style.display = 'none';
+      const c = document.querySelector('#searchOverlay .overlayListings');
+      c.innerHTML = '';
       if (!term) return;
       const t = term.toLowerCase();
-      allProjects.filter(p =>
-        p['Project Title'].toLowerCase().includes(t) ||
-        p.Tagline.toLowerCase().includes(t) ||
-        p.Description.toLowerCase().includes(t)
-      ).forEach(p => c.appendChild(createCard(p)));
+      allProjects
+        .filter(p =>
+          p['Project Title'].toLowerCase().includes(t) ||
+          p.Tagline.toLowerCase().includes(t) ||
+          p.Description.toLowerCase().includes(t)
+        )
+        .forEach(p => c.appendChild(createCard(p)));
     }
 
     function overlayCategory(typeKey) {
-      document.getElementById('searchMenu').style.display='none';
-      document.getElementById('overlaySearchInput').value='';
-      const c = document.querySelector('.overlayListings'); c.innerHTML='';
-      allProjects.filter(p=>p['Project Type']===typeKey)
-                 .forEach(p=>c.appendChild(createCard(p)));
+      document.getElementById('searchMenu').style.display = 'none';
+      document.getElementById('overlaySearchInput').value = '';
+      const c = document.querySelector('#searchOverlay .overlayListings');
+      c.innerHTML = '';
+      if (typeKey === 'Event') {
+        c.innerHTML = '<p class="text-gray-400 p-4">Event search not yet implemented.</p>';
+        return;
+      }
+      allProjects
+        .filter(p => p['Project Type'] === typeKey)
+        .forEach(p => c.appendChild(createCard(p)));
     }
 
     function overlayPeople() {
-      document.querySelector('.overlayListings').innerHTML='<p class="text-gray-400 p-4">People search not implemented.</p>';
+      document.getElementById('searchMenu').style.display = 'none';
+      document.getElementById('overlaySearchInput').value = '';
+      const c = document.querySelector('#searchOverlay .overlayListings');
+      c.innerHTML = '<p class="text-gray-400 p-4">People search not implemented.</p>';
+    }
+
+    function openSidebar() {
+      document.getElementById('sidebar').classList.add('open');
+      document.getElementById('sidebarOverlay').style.display = 'block';
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').style.display = 'none';
+    }
+
+    function openSearchOverlay() {
+      document.getElementById('searchOverlay').style.display = 'flex';
+      document.getElementById('overlaySearchInput').focus();
+      document.getElementById('searchMenu').style.display = 'flex';
+      document.querySelector('.overlayListings').innerHTML = '';
+    }
+    function closeSearchOverlay() {
+      document.getElementById('searchOverlay').style.display = 'none';
+      document.getElementById('overlaySearchInput').value = '';
+      document.querySelector('#searchOverlay .overlayListings').innerHTML = '';
     }
 
     function openDetail(p) {
-      currentDetail = p;
       document.getElementById('detailTitle').textContent = p['Project Title'];
+      document.getElementById('detailTitle2').textContent = p['Project Title'];
       document.getElementById('detailLogo').src = p['Logo URL'];
       document.getElementById('detailDesc').textContent = p.Description;
       document.getElementById('detailMembers').textContent = `Participants: ${p['Number of participants']}`;
-      document.getElementById('detailSchool').textContent = p['College or University Name'];
-
-      // tags
-      const tagContainer = document.getElementById('detailTags');
-      tagContainer.innerHTML = '';
-      const tagDefs = [
-        [p['Project Type'], {'Clubs & Orgs':'bg-blue-600','Business':'bg-green-600','Other Projects':'bg-purple-600','Event':'bg-yellow-500'}],
-        [p['Business Type'],{'Social Impact':'bg-pink-600','Startup':'bg-green-500','Freelance':'bg-indigo-500','Agency':'bg-red-500'}],
-        [p.Stage,{'Idea':'bg-gray-500','Prototype':'bg-blue-500','Beta':'bg-yellow-500','Launched':'bg-green-500'}]
-      ];
-      tagDefs.forEach(([val,map])=>{
-        if(val){
-          const span=document.createElement('span');
-          span.textContent=val;
-          span.className=`tag text-xs text-white ${map[val]||'bg-gray-700'}`;
-          tagContainer.appendChild(span);
+      const socials = document.querySelector('#detailContent .socials');
+      socials.innerHTML = '';
+      const fields = ['Instagram','LinkedIn','YouTube','TikTok','GitHub','Discord','GroupMe','Twitter'];
+      fields.forEach(key => {
+        if (p[key]) {
+          const a = document.createElement('a');
+          a.href = p[key]; a.target = '_blank';
+          const iconMap = {
+            Instagram: 'fa-instagram',
+            LinkedIn: 'fa-linkedin',
+            YouTube: 'fa-youtube',
+            TikTok: 'fa-tiktok',
+            GitHub: 'fa-github',
+            Discord: 'fa-discord',
+            GroupMe: 'fa-comment',
+            Twitter: 'fa-twitter',
+          };
+          a.innerHTML = `<i class="fab ${iconMap[key]}"></i>`;
+          socials.appendChild(a);
         }
       });
-
-      // socials & overflow
-      const socialsDiv = document.getElementById('detailSocials');
-      socialsDiv.innerHTML = '';
-      const keys = ['Instagram','LinkedIn','YouTube','TikTok','GitHub','Discord','GroupMe','Twitter'];
-      const links = keys.filter(k=>p[k]).map(k=>[k,p[k]]);
-      links.slice(0,4).forEach(([k,url])=>{
-        const i=document.createElement('i');
-        const iconMap={'Instagram':'fa-instagram','LinkedIn':'fa-linkedin','YouTube':'fa-youtube','TikTok':'fa-tiktok','GitHub':'fa-github','Discord':'fa-discord','GroupMe':'fa-comment','Twitter':'fa-twitter'};
-        i.className=`fa-brands ${iconMap[k]}`; i.onclick=()=>window.open(url,'_blank');
-        socialsDiv.appendChild(i);
-      });
-      const moreCount = links.length-4;
-      const moreSpan = document.getElementById('moreLinks');
-      if(moreCount>0){ moreSpan.textContent=`+${moreCount} more`; moreSpan.style.display='inline'; }
-      else moreSpan.style.display='none';
-
-      // modal list
-      const modalList = document.getElementById('modalLinkList');
-      modalList.innerHTML = '';
-      links.forEach(([k,url])=>{
-        const li=document.createElement('li');
-        li.innerHTML=`<strong>${k}:</strong> <a href="${url}" target="_blank">${url}</a>`;
-        modalList.appendChild(li);
-      });
-
-      // website
       const site = document.getElementById('detailWebsite');
-      if(p.Website){ site.href=p.Website; site.style.display='flex'; }
-      else site.style.display='none';
-
-      document.getElementById('detailOverlay').style.display='flex';
+      if (p.Website) {
+        site.href = p.Website; site.textContent = p.Website; site.style.display = 'block';
+      } else {
+        site.style.display = 'none';
+      }
+      document.getElementById('detailOverlay').style.display = 'flex';
     }
-    function closeDetail() { document.getElementById('detailOverlay').style.display='none'; }
+    function closeDetail() {
+      document.getElementById('detailOverlay').style.display = 'none';
+    }
 
-    function openModal() { document.getElementById('linkModal').style.display='flex'; }
-    function closeModal() { document.getElementById('linkModal').style.display='none'; }
-
-    function openSidebar(){ document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebarOverlay').style.display='block'; }
-    function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').style.display='none'; }
-
-    function openSearchOverlay(){ document.getElementById('searchOverlay').style.display='flex'; document.getElementById('overlaySearchInput').focus(); document.getElementById('searchMenu').style.display='flex'; }
-    function closeSearchOverlay(){ document.getElementById('searchOverlay').style.display='none'; document.getElementById('overlaySearchInput').value=''; document.querySelector('.overlayListings').innerHTML=''; }
-
-    function showOverlay(){ document.getElementById('installOverlay').classList.remove('hidden'); }
-    function hideOverlay(){ document.getElementById('installOverlay').classList.add('hidden'); }
-    function editProfile(){ alert('Edit Profile clicked'); }
+    function showOverlay() {
+      document.getElementById('installOverlay').classList.remove('hidden');
+    }
+    function hideOverlay() {
+      document.getElementById('installOverlay').classList.add('hidden');
+    }
+    function editProfile() { alert('Edit Profile clicked'); }
   </script>
 </body>
 </html>
