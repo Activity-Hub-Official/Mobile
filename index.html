@@ -20,239 +20,143 @@
 
   <style>
     html, body {
-      height: 100%;
-      margin: 0;
-      overflow: hidden;
-      overscroll-behavior: none;
-      touch-action: manipulation;
-      background: #000;
+      height: 100%; margin: 0;
+      overflow: hidden; overscroll-behavior: none;
+      touch-action: manipulation; background: #000;
     }
     .bar { background: #000; z-index: 50; }
 
     /* Sidebar */
     #sidebar {
-      position: fixed;
-      top: env(safe-area-inset-top);
-      left: 0;
-      bottom: 0;
-      width: min(80vw, 16rem);
-      transform: translateX(-100%);
-      transition: transform .3s;
-      z-index: 60;
-      background: #2d3748;
-      padding: 1rem;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
+      position: fixed; top: env(safe-area-inset-top); left: 0; bottom: 0;
+      width: min(80vw,16rem); transform: translateX(-100%);
+      transition: transform .3s; z-index: 60;
+      background: #2d3748; padding: 1rem; box-sizing: border-box;
+      display: flex; flex-direction: column;
     }
     #sidebar.open { transform: translateX(0); }
     #sidebarOverlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 55;
-      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 55; display: none;
     }
 
     /* Listings */
     #listings {
-      flex: 1;
-      width: 100%;
-      overflow-y: auto;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior: contain;
-      margin-top: 4rem;
-      padding: 0 1rem 4rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
+      flex: 1; width: 100%; overflow-y: auto;
+      scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain; margin-top: 4rem;
+      padding: 0 1rem 4rem; display: flex; flex-direction: column; gap: 1rem;
     }
 
     /* Search overlay */
     #searchOverlay {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      display: none;
-      flex-direction: column;
-      z-index: 70;
+      position: fixed; inset: 0; background: #000;
+      display: none; flex-direction: column; z-index: 70;
     }
     #searchHeader {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      display: flex;
-      align-items: center;
-      gap: .5rem;
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; align-items: center; gap: .5rem;
       padding: env(safe-area-inset-top) 1rem 1rem;
-      background: #000;
-      z-index: 71;
+      background: #000; z-index: 71;
     }
     #searchMenu {
       margin-top: calc(env(safe-area-inset-top) + 3.5rem);
-      background: #111827;
-      display: flex;
-      flex-direction: column;
+      background: #111827; display: flex; flex-direction: column;
     }
     #searchMenu button {
-      text-align: left;
-      padding: .75rem 1rem;
-      color: #E5E7EB;
-      background: transparent;
-      border: none;
+      text-align: left; padding: .75rem 1rem;
+      color: #E5E7EB; background: transparent; border: none;
     }
-    #searchMenu button:hover {
-      background: #374151;
-    }
+    #searchMenu button:hover { background: #374151; }
     .overlayListings {
       position: absolute;
       top: calc(env(safe-area-inset-top) + 8rem);
       bottom: 0; left: 0; right: 0;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+      overflow-y: auto; -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
+      padding: 1rem; display: flex; flex-direction: column; gap: 1rem;
     }
     .search-btn {
-      position: absolute;
-      right: .75rem;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
+      position: absolute; right: .75rem; top: 50%;
+      transform: translateY(-50%); background: none; border: none;
       color: #9CA3AF;
     }
-    .search-btn:active {
-      color: #FFF;
-    }
+    .search-btn:active { color: #FFF; }
 
     /* Detail overlay */
     #detailOverlay {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      display: none;
-      flex-direction: column;
-      z-index: 80;
+      position: fixed; inset: 0; background: #000;
+      display: none; flex-direction: column; z-index: 80;
     }
     #detailHeader {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      display: flex;
-      align-items: center;
-      gap: .5rem;
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; align-items: center; gap: .5rem;
       padding: env(safe-area-inset-top) 1rem 1rem;
-      background: #000;
-      z-index: 81;
+      background: #000; z-index: 81;
     }
     #detailContent {
       margin-top: calc(env(safe-area-inset-top) + 3.5rem);
-      flex: 1;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+      flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
+      padding: 1rem; display: flex; flex-direction: column; gap: 1.5rem;
     }
     #detailContent img {
-      width: 6rem;
-      height: 6rem;
-      object-fit: cover;
-      border-radius: .5rem;
-      margin: 0 auto;
+      width: 6rem; height: 6rem; object-fit: cover;
+      border-radius: .5rem; margin: 0 auto;
     }
     #detailContent h3 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      text-align: center;
+      font-size: 1.25rem; font-weight: 600; text-align: center;
     }
     #detailContent p {
-      line-height: 1.5;
-      color: #D1D5DB;
+      line-height: 1.5; color: #D1D5DB;
     }
     .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .5rem;
-      justify-content: center;
+      display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center;
     }
     .tag {
-      font-size: .75rem;
-      font-weight: 500;
-      padding: .25rem .5rem;
-      border-radius: .25rem;
-      color: white;
+      display: inline-flex; align-items: center; gap: .25rem;
+      font-size: .75rem; font-weight: 500;
+      padding: .25rem .5rem; border-radius: .25rem; color: #FFF;
     }
-    .tag.type     { background: #10B981; } /* Clubs */
-    .tag.business { background: #F59E0B; } /* Business */
-    .tag.project  { background: #8B5CF6; } /* Other Projects */
-    .tag.event    { background: #3B82F6; } /* Event */
-    .tag.industry { background: #EF4444; } /* Industry */
-    .tag.stage    { background: #14B8A6; } /* Stage */
+    .tag.type     { background: #22C55E; } /* Clubs */       /* fa-users */
+    .tag.business { background: #EAB308; } /* Business */    /* fa-briefcase */
+    .tag.project  { background: #C084FC; } /* Other Projects */ /* fa-folder-open */
+    .tag.event    { background: #3B82F6; } /* Event */       /* fa-calendar-alt */
+    .tag.industry { background: #EF4444; } /* Industry */    /* fa-industry */
+    .tag.stage    { background: #06B6D4; } /* Stage */       /* fa-flag */
     .socials {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      justify-content: center;
+      display: flex; align-items: center; gap: 1rem; justify-content: center;
     }
     .socials a, .socials button {
-      font-size: 1.5rem;
-      color: #9CA3AF;
-      background: none;
-      border: none;
+      font-size: 1.5rem; color: #9CA3AF; background: none; border: none;
     }
-    .socials a:hover, .socials button:hover {
-      color: #FFF;
-    }
+    .socials a:hover, .socials button:hover { color: #FFF; }
 
     /* Overflow modal */
     #modalOverlay {
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background: rgba(0,0,0,0.8);
-      display: none;
-      align-items: center;
-      justify-content: center;
+      display: none; align-items: center; justify-content: center;
       z-index: 85;
     }
     #modalContent {
-      background: #111827;
-      padding: 1rem;
-      border-radius: .5rem;
-      max-width: 90%;
-      max-height: 80%;
-      overflow-y: auto;
-      position: relative;
+      background: #111827; padding: 1rem; border-radius: .5rem;
+      max-width: 90%; max-height: 80%; overflow-y: auto; position: relative;
     }
     #modalContent h3 {
-      margin-bottom: .5rem;
-      color: #E5E7EB;
-      text-align: center;
+      margin-bottom: .5rem; color: #E5E7EB; text-align: center;
     }
-    #modalContent ul {
-      list-style: none;
-      padding: 0;
-    }
+    #modalContent ul { list-style: none; padding: 0; }
     #modalContent li {
-      margin: .5rem 0;
+      display: flex; align-items: center; gap: .75rem;
+      padding: .5rem 0;
     }
     #modalContent a {
-      color: #3B82F6;
-      word-break: break-all;
+      color: #3B82F6; word-break: break-all;
     }
     #modalClose {
-      position: absolute;
-      top: .5rem;
-      right: .5rem;
-      font-size: 1.5rem;
-      color: #E5E7EB;
-      background: none;
-      border: none;
+      position: absolute; top: .5rem; right: .5rem;
+      font-size: 1.5rem; color: #E5E7EB; background: none; border: none;
     }
   </style>
 </head>
@@ -431,7 +335,6 @@
 
   <script>
     let allProjects = [];
-
     const isStandalone =
       window.matchMedia('(display-mode: standalone)').matches ||
       window.navigator.standalone === true;
@@ -571,9 +474,11 @@
     }
 
     function openDetail(p) {
+      // Title & school
       document.getElementById('detailTitle').textContent = p['Project Title'];
       document.getElementById('detailTitle2').textContent = p['Project Title'];
       document.getElementById('detailSchool').textContent = p['College or University Name'];
+      // Logo & desc
       document.getElementById('detailLogo').src = p['Logo URL'];
       document.getElementById('detailDesc').textContent = p.Description;
       document.getElementById('detailMembers').textContent =
@@ -583,16 +488,16 @@
       const tagsEl = document.getElementById('detailTags');
       tagsEl.innerHTML = '';
       const tagData = [
-        { key: p['Project Type'], cls: 'type' },
-        { key: p['Business Type'], cls: 'business' },
-        { key: p.Industry, cls: 'industry' },
-        { key: p.Stage, cls: 'stage' }
+        { key: p['Project Type'], cls: 'type', icon: 'fa-users' },
+        { key: p['Business Type'], cls: 'business', icon: 'fa-briefcase' },
+        { key: p.Industry, cls: 'industry', icon: 'fa-industry' },
+        { key: p.Stage, cls: 'stage', icon: 'fa-flag' }
       ];
       tagData.forEach(t => {
         if (t.key) {
           const span = document.createElement('span');
           span.className = `tag ${t.cls}`;
-          span.textContent = t.key;
+          span.innerHTML = `<i class="fa-solid ${t.icon}"></i> ${t.key}`;
           tagsEl.appendChild(span);
         }
       });
@@ -602,8 +507,9 @@
       socialsEl.innerHTML = '';
       const linkKeys = ['Website','Instagram','LinkedIn','YouTube','TikTok','GitHub','Discord','GroupMe','Twitter'];
       const entries = linkKeys.map(key => ({ key, url: p[key] })).filter(e => e.url);
+      // website first
       if (p.Website) entries.unshift({ key: 'Website', url: p.Website });
-      entries.slice(0, 4).forEach(e => {
+      entries.slice(0,4).forEach(e => {
         const a = document.createElement('a');
         a.href = e.url; a.target = '_blank';
         const iconMap = {
@@ -611,7 +517,7 @@
           TikTok:'fa-tiktok', GitHub:'fa-github', Discord:'fa-discord',
           GroupMe:'fa-comment', Twitter:'fa-twitter', Website:'fa-globe'
         };
-        a.innerHTML = `<i class="fab ${iconMap[e.key] || 'fa-link'}"></i>`;
+        a.innerHTML = `<i class="fa-solid ${iconMap[e.key] || 'fa-globe'}"></i>`;
         socialsEl.appendChild(a);
       });
       if (entries.length > 4) {
@@ -632,7 +538,15 @@
       list.innerHTML = '';
       entries.forEach(e => {
         const li = document.createElement('li');
-        li.innerHTML = `<strong>${e.key}</strong>: <a href="${e.url}" target="_blank">${e.url}</a>`;
+        const iconMap = {
+          Instagram:'fa-instagram', LinkedIn:'fa-linkedin', YouTube:'fa-youtube',
+          TikTok:'fa-tiktok', GitHub:'fa-github', Discord:'fa-discord',
+          GroupMe:'fa-comment', Twitter:'fa-twitter', Website:'fa-globe'
+        };
+        li.innerHTML = `
+          <i class="fa-solid ${iconMap[e.key] || 'fa-link'} w-6 text-xl"></i>
+          <a href="${e.url}" target="_blank">${e.key}</a>
+        `;
         list.appendChild(li);
       });
       document.getElementById('modalOverlay').style.display = 'flex';
