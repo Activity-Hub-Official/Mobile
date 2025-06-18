@@ -19,59 +19,84 @@
 
   <style>
     html, body {
-      height: 100%; margin: 0;
-      overflow: hidden; overscroll-behavior: none;
-      touch-action: manipulation; background: #000;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      overscroll-behavior: none;
+      touch-action: manipulation;
+      background: #000;
     }
-    /* Sidebar */
-    #sidebar { position: fixed; top:0; left:0; bottom:0; width:16rem;
-      transform:translateX(-100%); transition:transform .3s; z-index:60;
-      background:#2d3748; padding:calc(env(safe-area-inset-top)+1rem) 1rem 1rem;
-      display:flex; flex-direction:column;
+    /* Sidebar off-canvas */
+    #sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: 16rem;
+      transform: translateX(-100%);
+      transition: transform .3s;
+      z-index: 60;
+      background: #2d3748;
+      padding: calc(env(safe-area-inset-top)+1rem) 1rem 1rem;
+      display: flex; flex-direction: column;
     }
-    #sidebar.open { transform:translateX(0); }
-    #sidebarOverlay { position:fixed; inset:0; background:rgba(0,0,0,0.5);
-      z-index:55; display:none;
+    #sidebar.open { transform: translateX(0); }
+    #sidebarOverlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 55;
+      display: none;
     }
     /* Main listings */
-    #listings { flex:1; width:100%; overflow-y:auto;
-      scroll-behavior:smooth; -webkit-overflow-scrolling:touch;
-      overscroll-behavior:contain; margin-top:4rem; padding:0 1rem 4rem;
-      display:flex; flex-direction:column; gap:1rem;
+    #listings {
+      flex: 1; width: 100%; overflow-y: auto;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      margin-top: 4rem; padding: 0 1rem 4rem;
+      display: flex; flex-direction: column; gap: 1rem;
     }
-    .bar { background:#000; z-index:50; }
+    .bar { background: #000; z-index: 50; }
     /* Search overlay */
-    #searchOverlay { position:fixed; inset:0; background:#000;
-      display:none; flex-direction:column; z-index:70;
+    #searchOverlay {
+      position: fixed; inset: 0; background: #000;
+      display: none; flex-direction: column; z-index: 70;
     }
-    #searchHeader { position:fixed; top:0; left:0; right:0;
-      display:flex; align-items:center; gap:.5rem;
-      padding:calc(env(safe-area-inset-top)+1rem) 1rem 1rem;
-      background:#000; z-index:71;
+    #searchHeader {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; align-items: center; gap: .5rem;
+      padding: calc(env(safe-area-inset-top)+1rem) 1rem 1rem;
+      background: #000; z-index: 71;
     }
-    #searchHeader input { flex:1; }
-    #suggestions {
-      margin-top: calc(env(safe-area-inset-top) + 3.5rem);
-      background:#1a202c; /* gray-800 */
-      list-style:none; padding:0; max-height:200px; overflow-y:auto;
+    #searchMenu {
+      position: absolute;
+      top: calc(env(safe-area-inset-top) + 3.5rem);
+      left: 0; right: 0;
+      background: #111827;
+      display: flex; flex-direction: column;
+      z-index: 72;
     }
-    #suggestions li {
-      padding:.5rem 1rem; cursor:pointer;
+    #searchMenu button {
+      text-align: left;
+      padding: .75rem 1rem;
+      color: #E5E7EB;
+      background: transparent;
+      border: none;
     }
-    #suggestions li:hover {
-      background:#2d3748;
+    #searchMenu button:hover {
+      background: #374151;
     }
     #searchOverlay .overlayListings {
-      position:absolute; top: calc(env(safe-area-inset-top)+3.5rem + 200px);
-      bottom:0; left:0; right:0; overflow-y:auto;
-      -webkit-overflow-scrolling:touch; overscroll-behavior:contain;
-      display:flex; flex-direction:column; gap:1rem;
-      padding:0 1rem calc(env(safe-area-inset-bottom)+1rem);
+      position: absolute;
+      top: calc(env(safe-area-inset-top) + 6rem);
+      bottom: 0; left: 0; right: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      display: flex; flex-direction: column; gap: 1rem;
+      padding: 0 1rem env(safe-area-inset-bottom);
     }
   </style>
 </head>
 <body class="relative text-white h-screen">
 
+  <!-- Sidebar and overlay -->
   <div id="sidebarOverlay" onclick="closeSidebar()"></div>
   <aside id="sidebar">
     <div class="flex items-center space-x-3 mb-4">
@@ -107,18 +132,24 @@
   </aside>
 
   <!-- Search Overlay -->
-  <div id="searchOverlay" class="hidden flex">
+  <div id="searchOverlay" class="flex hidden">
     <div id="searchHeader">
       <button onclick="closeSearchOverlay()" class="p-2 mr-2">
         <i class="fa-solid fa-arrow-left text-xl"></i>
       </button>
       <div class="relative flex-1">
         <input id="overlaySearchInput" type="search" placeholder="Search…"
-               class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-white placeholder-gray-400 focus:outline-none"/>
+               class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-white focus:outline-none"/>
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
       </div>
     </div>
-    <ul id="suggestions"></ul>
+    <div id="searchMenu">
+      <button onclick="overlayCategory('Clubs & Orgs')">Search Clubs</button>
+      <button onclick="overlayCategory('Business')">Search Businesses</button>
+      <button onclick="overlayCategory('Other Projects')">Search Projects</button>
+      <button onclick="overlayPeople()">Search People</button>
+      <button onclick="overlayCategory('Event')">Search Events</button>
+    </div>
     <div class="overlayListings"></div>
   </div>
 
@@ -129,7 +160,8 @@
     <div class="bar fixed top-0 left-0 right-0 flex items-center space-x-2 p-4"
          style="padding-top: env(safe-area-inset-top);">
       <img src="https://i.imgur.com/zGz4RR3.jpeg"
-           class="w-8 h-8 rounded-full cursor-pointer" onclick="openSidebar()"/>
+           class="w-8 h-8 rounded-full cursor-pointer"
+           onclick="openSidebar()"/>
       <div class="relative flex-1">
         <input readonly placeholder="Search…"
                class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-gray-400 cursor-text"
@@ -166,16 +198,21 @@
   </div>
 
   <!-- Fallback Try Page -->
-  <div id="mainContent" class="flex flex-col items-center justify-between w-full max-w-sm mx-auto h-screen p-4">
+  <div id="mainContent"
+       class="flex flex-col items-center justify-between w-full max-w-sm mx-auto h-screen p-4">
     <header class="text-center mt-8">
-      <h1 class="text-3xl font-bold leading-tight">Discover, Connect, & Launch<br/>Your Campus Journey</h1>
+      <h1 class="text-3xl font-bold leading-tight">
+        Discover, Connect, & Launch<br/>Your Campus Journey
+      </h1>
       <p class="mt-3 text-gray-300 text-sm">Try the new mobile experience of Activity Hub</p>
     </header>
     <div class="my-8">
-      <img src="https://via.placeholder.com/250x500?text=Activity+Hub+Preview" class="rounded-xl shadow-xl max-w-[250px]"/>
+      <img src="https://via.placeholder.com/250x500?text=Activity+Hub+Preview"
+           class="rounded-xl shadow-xl max-w-[250px]"/>
     </div>
     <div class="w-full text-center">
-      <button onclick="showOverlay()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full shadow-lg">
+      <button onclick="showOverlay()"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full shadow-lg">
         Try Activity Hub Now
       </button>
       <p class="mt-3 text-sm text-gray-400">No download needed. Works right in your browser.</p>
@@ -184,7 +221,8 @@
   </div>
 
   <!-- Add to Home Screen Overlay -->
-  <div id="installOverlay" class="hidden fixed inset-0 bg-black bg-opacity-90 text-white flex flex-col justify-between items-center p-6 z-30">
+  <div id="installOverlay"
+       class="hidden fixed inset-0 bg-black bg-opacity-90 text-white flex flex-col justify-between items-center p-6 z-30">
     <div class="max-w-sm text-center mt-16">
       <i class="fa-solid fa-arrow-up-from-bracket text-4xl mb-4 text-blue-400"></i>
       <h2 class="text-2xl font-semibold mb-3">Add to Home Screen</h2>
@@ -201,7 +239,6 @@
   <script>
     let allProjects = [];
 
-    const categories = ['Clubs & Orgs','Business','Other Projects','Event'];
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches
                       || window.navigator.standalone === true;
 
@@ -217,7 +254,9 @@
       try {
         const res = await fetch('https://sheet2api.com/v1/an4oVvpQR51V/mock-data-new');
         allProjects = await res.json();
-      } catch (e) { console.error(e); }
+      } catch (e) {
+        console.error('Fetch failed', e);
+      }
     }
 
     function createCard(p) {
@@ -228,7 +267,8 @@
         <div class="flex-1">
           <h3 class="text-white font-semibold">${p['Project Title']}</h3>
           <p class="text-gray-400 text-sm">${p.Tagline}</p>
-          <a href="${p['Demo Link']}" target="_blank" class="mt-2 text-blue-500 text-sm hover:underline inline-block">
+          <a href="${p['Demo Link']}" target="_blank"
+             class="mt-2 text-blue-500 text-sm hover:underline inline-block">
             ${p['Call to Action']}
           </a>
         </div>`;
@@ -237,83 +277,113 @@
 
     function showHome() {
       const groups = [
-        { title:'Clubs', key:'Clubs & Orgs' },
-        { title:'Businesses', key:'Business' },
-        { title:'Projects', key:'Other Projects' }
+        { title: 'Clubs', key: 'Clubs & Orgs' },
+        { title: 'Businesses', key: 'Business' },
+        { title: 'Projects', key: 'Other Projects' }
       ];
-      const c = document.getElementById('listings'); c.innerHTML = '';
+      const c = document.getElementById('listings');
+      c.innerHTML = '';
       groups.forEach(g => {
         const h = document.createElement('h2');
-        h.className = 'text-xl font-bold mt-4 mb-2 px-1'; h.textContent = g.title;
+        h.className = 'text-xl font-bold mt-4 mb-2 px-1';
+        h.textContent = g.title;
         c.appendChild(h);
-        allProjects.filter(p=>p['Project Type']===g.key).slice(0,3).forEach(p=>c.appendChild(createCard(p)));
+        allProjects
+          .filter(p => p['Project Type'] === g.key)
+          .slice(0, 3)
+          .forEach(p => c.appendChild(createCard(p)));
       });
     }
 
     function showCategory(typeKey) {
-      const map = {'Clubs & Orgs':'Clubs','Business':'Businesses','Other Projects':'Projects','Event':'Events'};
-      const c = document.getElementById('listings'); c.innerHTML = '';
+      const map = {
+        'Clubs & Orgs': 'Clubs',
+        'Business': 'Businesses',
+        'Other Projects': 'Projects',
+        'Event': 'Events'
+      };
+      const c = document.getElementById('listings');
+      c.innerHTML = '';
       const h = document.createElement('h2');
-      h.className = 'text-xl font-bold mt-4 mb-2 px-1'; h.textContent = map[typeKey]||typeKey;
+      h.className = 'text-xl font-bold mt-4 mb-2 px-1';
+      h.textContent = map[typeKey] || typeKey;
       c.appendChild(h);
-      allProjects.filter(p=>p['Project Type']===typeKey).forEach(p=>c.appendChild(createCard(p)));
+      allProjects
+        .filter(p => p['Project Type'] === typeKey)
+        .forEach(p => c.appendChild(createCard(p)));
     }
 
     function attachOverlaySearch() {
-      const inp = document.getElementById('overlaySearchInput');
-      inp.addEventListener('input', updateSuggestions);
-      inp.addEventListener('input', overlaySearch);
-    }
-
-    function updateSuggestions() {
-      const val = document.getElementById('overlaySearchInput').value.toLowerCase();
-      const list = document.getElementById('suggestions');
-      list.innerHTML = '';
-      if (!val) return;
-      categories.filter(c=>c.toLowerCase().includes(val)).forEach(c => {
-        const li = document.createElement('li');
-        li.textContent = c;
-        li.onclick = () => {
-          document.getElementById('overlaySearchInput').value = c;
-          list.innerHTML = '';
-          overlaySearch();
-        };
-        list.appendChild(li);
-      });
+      document.getElementById('overlaySearchInput')
+              .addEventListener('input', overlaySearch);
     }
 
     function overlaySearch() {
       const term = document.getElementById('overlaySearchInput').value.trim();
-      const c = document.querySelector('#searchOverlay .overlayListings'); c.innerHTML = '';
-      if (categories.includes(term)) {
-        allProjects.filter(p=>p['Project Type']===term).forEach(p=>c.appendChild(createCard(p)));
+      document.getElementById('searchMenu').style.display = term ? 'none' : 'flex';
+      const c = document.querySelector('#searchOverlay .overlayListings');
+      c.innerHTML = '';
+      if (!term) return;
+      const t = term.toLowerCase();
+      allProjects
+        .filter(p =>
+          p['Project Title'].toLowerCase().includes(t) ||
+          p.Tagline.toLowerCase().includes(t) ||
+          p.Description.toLowerCase().includes(t)
+        )
+        .forEach(p => c.appendChild(createCard(p)));
+    }
+
+    function overlayCategory(typeKey) {
+      document.getElementById('searchMenu').style.display = 'none';
+      document.getElementById('overlaySearchInput').value = '';
+      const c = document.querySelector('#searchOverlay .overlayListings');
+      c.innerHTML = '';
+      if (typeKey === 'Event') {
+        c.innerHTML = '<p class="text-gray-400 p-4">Event search not yet implemented.</p>';
         return;
       }
-      const t = term.toLowerCase();
-      allProjects.filter(p =>
-        p['Project Title'].toLowerCase().includes(t) ||
-        p.Tagline.toLowerCase().includes(t) ||
-        p.Description.toLowerCase().includes(t)
-      ).forEach(p=>c.appendChild(createCard(p)));
+      allProjects
+        .filter(p => p['Project Type'] === typeKey)
+        .forEach(p => c.appendChild(createCard(p)));
     }
 
-    function openSidebar(){ document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebarOverlay').style.display='block'; }
-    function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').style.display='none'; }
-
-    function openSearchOverlay(){
-      document.getElementById('searchOverlay').style.display='flex';
-      document.getElementById('overlaySearchInput').focus();
-    }
-    function closeSearchOverlay(){
-      document.getElementById('searchOverlay').style.display='none';
+    function overlayPeople() {
+      document.getElementById('searchMenu').style.display = 'none';
       document.getElementById('overlaySearchInput').value = '';
-      document.getElementById('suggestions').innerHTML = '';
+      const c = document.querySelector('#searchOverlay .overlayListings');
+      c.innerHTML = '<p class="text-gray-400 p-4">People search not implemented.</p>';
+    }
+
+    function openSidebar() {
+      document.getElementById('sidebar').classList.add('open');
+      document.getElementById('sidebarOverlay').style.display = 'block';
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').style.display = 'none';
+    }
+
+    function openSearchOverlay() {
+      document.getElementById('searchOverlay').style.display = 'flex';
+      document.getElementById('overlaySearchInput').focus();
+      document.getElementById('searchMenu').style.display = 'flex';
+    }
+    function closeSearchOverlay() {
+      document.getElementById('searchOverlay').style.display = 'none';
+      document.getElementById('overlaySearchInput').value = '';
       document.querySelector('#searchOverlay .overlayListings').innerHTML = '';
     }
 
-    function showOverlay(){ document.getElementById('installOverlay').classList.remove('hidden'); }
-    function hideOverlay(){ document.getElementById('installOverlay').classList.add('hidden'); }
-    function editProfile(){ alert('Edit Profile clicked'); }
+    function showOverlay() {
+      document.getElementById('installOverlay').classList.remove('hidden');
+    }
+    function hideOverlay() {
+      document.getElementById('installOverlay').classList.add('hidden');
+    }
+    function editProfile() {
+      alert('Edit Profile clicked');
+    }
   </script>
 </body>
 </html>
