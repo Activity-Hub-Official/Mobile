@@ -13,7 +13,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Font Awesome -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    rel="stylesheet"
+  />
 
   <style>
     html, body {
@@ -21,7 +24,6 @@
       overflow: hidden;
       touch-action: manipulation;
     }
-    /* Sidebar off-canvas */
     #sidebar {
       position: fixed; top: 0; left: 0; bottom: 0; width: 16rem;
       transform: translateX(-100%); transition: transform .3s ease-in-out;
@@ -33,45 +35,10 @@
       position: fixed; inset: 0; background: rgba(0,0,0,0.5);
       z-index: 55; display: none;
     }
-    /* Push content down below the bar */
-    #mainContent, #pwaShell, #installOverlay {
-      padding-top: calc(env(safe-area-inset-top) + 3.5rem);
-    }
   </style>
 </head>
 
 <body class="relative h-screen overflow-hidden bg-white dark:bg-black text-black dark:text-white">
-
-  <!-- Global Top Bar -->
-  <div
-    id="globalTopBar"
-    class="fixed top-0 left-0 right-0 z-50 flex items-center space-x-3 bg-white dark:bg-black bg-opacity-90 p-4"
-    style="padding-top: env(safe-area-inset-top); height: 3.5rem;"
-  >
-    <!-- Profile Pic -->
-    <img
-      src="https://i.imgur.com/zGz4RR3.jpeg"
-      alt="Profile"
-      class="w-8 h-8 rounded-full cursor-pointer"
-      onclick="openSidebar()"
-    />
-    <!-- Search Input -->
-    <div class="relative flex-1">
-      <input
-        type="search"
-        placeholder="Search…"
-        class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-200 dark:bg-gray-800 text-black dark:text-white placeholder-gray-500 focus:outline-none"
-      />
-      <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400"></i>
-    </div>
-    <!-- Post Icon Button -->
-    <button
-      class="p-2 bg-blue-600 hover:bg-blue-700 rounded-full transition"
-      title="Create Post"
-    >
-      <i class="fa-solid fa-paper-plane text-white"></i>
-    </button>
-  </div>
 
   <!-- Sidebar Overlay -->
   <div id="sidebarOverlay" onclick="closeSidebar()"></div>
@@ -100,6 +67,34 @@
   <!-- PWA Shell -->
   <div id="pwaShell" class="hidden absolute inset-0 flex flex-col items-center justify-center z-40 p-4 h-screen overflow-hidden bg-white dark:bg-black text-black dark:text-white">
 
+    <!-- Top bar: profile pic + search + post button -->
+    <div class="absolute top-0 left-0 right-0 flex items-center space-x-3 bg-white dark:bg-black bg-opacity-80 p-4"
+         style="padding-top: env(safe-area-inset-top);">
+      <!-- Profile Pic -->
+      <img
+        src="https://i.imgur.com/zGz4RR3.jpeg"
+        alt="Profile"
+        class="w-8 h-8 rounded-full cursor-pointer"
+        onclick="openSidebar()"
+      />
+      <!-- Search wrapper -->
+      <div class="relative flex-1">
+        <input
+          type="search"
+          placeholder="Search…"
+          class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-200 dark:bg-gray-800 text-black dark:text-white placeholder-gray-500 focus:outline-none"
+        />
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400"></i>
+      </div>
+      <!-- Post Icon Button -->
+      <button
+        class="p-2 bg-blue-600 hover:bg-blue-700 rounded-full transition"
+        title="Create Post"
+      >
+        <i class="fa-solid fa-paper-plane text-white"></i>
+      </button>
+    </div>
+
     <!-- Splash -->
     <img src="https://i.imgur.com/OKI7DUh.png"
          alt="Splash"
@@ -112,7 +107,7 @@
       <i class="fa-solid fa-wifi"></i>
     </div>
 
-    <!-- Bottom Tabs -->
+    <!-- Bottom tabs -->
     <nav class="absolute bottom-0 left-0 right-0 bg-white dark:bg-black bg-opacity-80 flex justify-around py-3"
          style="padding-bottom: env(safe-area-inset-bottom)">
       <a href="#" class="flex flex-col items-center text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white">
@@ -159,7 +154,7 @@
     </footer>
   </div>
 
-  <!-- Add to Home Screen Overlay -->
+  <!-- Install Overlay -->
   <div id="installOverlay" class="hidden fixed inset-0 flex flex-col justify-between items-center p-6 z-30 h-screen overflow-hidden bg-white dark:bg-black text-black dark:text-white">
     <div class="max-w-sm text-center mt-16">
       <i class="fa-solid fa-arrow-up-from-bracket text-4xl mb-4 text-blue-500"></i>
