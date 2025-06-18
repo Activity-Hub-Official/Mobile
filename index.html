@@ -19,69 +19,59 @@
 
   <style>
     html, body {
-      height: 100%;
-      margin: 0;
-      overflow: hidden;
-      overscroll-behavior: none;
-      touch-action: manipulation;
-      background: #000;
+      height: 100%; margin: 0;
+      overflow: hidden; overscroll-behavior: none;
+      touch-action: manipulation; background: #000;
     }
-    /* Sidebar off-canvas */
-    #sidebar {
-      position: fixed; top: 0; left: 0; bottom: 0;
-      width: 16rem;
-      transform: translateX(-100%);
-      transition: transform .3s;
-      z-index: 60;
-      background: #2d3748;
-      padding: calc(env(safe-area-inset-top) + 1rem) 1rem 1rem;
-      display: flex; flex-direction: column;
+    /* Sidebar */
+    #sidebar { position: fixed; top:0; left:0; bottom:0; width:16rem;
+      transform:translateX(-100%); transition:transform .3s; z-index:60;
+      background:#2d3748; padding:calc(env(safe-area-inset-top)+1rem) 1rem 1rem;
+      display:flex; flex-direction:column;
     }
-    #sidebar.open { transform: translateX(0); }
-    #sidebarOverlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.5); z-index: 55;
-      display: none;
+    #sidebar.open { transform:translateX(0); }
+    #sidebarOverlay { position:fixed; inset:0; background:rgba(0,0,0,0.5);
+      z-index:55; display:none;
     }
     /* Main listings */
-    #listings {
-      flex: 1; width: 100%; overflow-y: auto;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior: contain;
-      margin-top: 4rem; padding: 0 1rem 4rem;
-      display: flex; flex-direction: column; gap: 1rem;
+    #listings { flex:1; width:100%; overflow-y:auto;
+      scroll-behavior:smooth; -webkit-overflow-scrolling:touch;
+      overscroll-behavior:contain; margin-top:4rem; padding:0 1rem 4rem;
+      display:flex; flex-direction:column; gap:1rem;
     }
-    .bar { background: #000; z-index: 50; }
+    .bar { background:#000; z-index:50; }
     /* Search overlay */
-    #searchOverlay {
-      position: fixed; inset: 0;
-      background: #000;
-      display: none;
-      flex-direction: column;
-      z-index: 70;
+    #searchOverlay { position:fixed; inset:0; background:#000;
+      display:none; flex-direction:column; z-index:70;
     }
-    #searchHeader {
-      position: fixed; top: 0; left: 0; right: 0;
-      display: flex; align-items: center; gap: .5rem;
-      padding: calc(env(safe-area-inset-top) + 1rem) 1rem 1rem;
-      background: #000; z-index: 71;
+    #searchHeader { position:fixed; top:0; left:0; right:0;
+      display:flex; align-items:center; gap:.5rem;
+      padding:calc(env(safe-area-inset-top)+1rem) 1rem 1rem;
+      background:#000; z-index:71;
+    }
+    #searchHeader input { flex:1; }
+    #suggestions {
+      margin-top: calc(env(safe-area-inset-top) + 3.5rem);
+      background:#1a202c; /* gray-800 */
+      list-style:none; padding:0; max-height:200px; overflow-y:auto;
+    }
+    #suggestions li {
+      padding:.5rem 1rem; cursor:pointer;
+    }
+    #suggestions li:hover {
+      background:#2d3748;
     }
     #searchOverlay .overlayListings {
-      position: absolute;
-      top: calc(env(safe-area-inset-top) + 3rem);
-      bottom: 0; left: 0; right: 0;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior: contain;
-      display: flex; flex-direction: column; gap: 1rem;
-      padding: 0 1rem env(safe-area-inset-bottom);
+      position:absolute; top: calc(env(safe-area-inset-top)+3.5rem + 200px);
+      bottom:0; left:0; right:0; overflow-y:auto;
+      -webkit-overflow-scrolling:touch; overscroll-behavior:contain;
+      display:flex; flex-direction:column; gap:1rem;
+      padding:0 1rem calc(env(safe-area-inset-bottom)+1rem);
     }
   </style>
 </head>
 <body class="relative text-white h-screen">
 
-  <!-- Sidebar & overlay -->
   <div id="sidebarOverlay" onclick="closeSidebar()"></div>
   <aside id="sidebar">
     <div class="flex items-center space-x-3 mb-4">
@@ -92,36 +82,43 @@
       </div>
     </div>
     <hr class="border-gray-700 my-2"/>
-    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded"><i class="fa-solid fa-star mr-3"></i>Activities Being Followed</button>
+    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
+      <i class="fa-solid fa-star mr-3"></i>Activities Being Followed
+    </button>
     <hr class="border-gray-700 my-2"/>
     <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
       <i class="fa-solid fa-clipboard-list mr-3"></i>Your Activities
       <span class="ml-auto text-xs bg-blue-600 px-2 py-0.5 rounded-full">Admin</span>
     </button>
     <hr class="border-gray-700 my-2"/>
-    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded"><i class="fa-solid fa-qrcode mr-3"></i>QR Code Sign-In</button>
+    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
+      <i class="fa-solid fa-qrcode mr-3"></i>QR Code Sign-In
+    </button>
     <hr class="border-gray-700 my-2"/>
-    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded"><i class="fa-solid fa-cog mr-3"></i>Settings</button>
-    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded"><i class="fa-solid fa-circle-question mr-3"></i>Help Center</button>
-    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded mt-auto"><i class="fa-solid fa-sign-out-alt mr-3"></i>Logout</button>
+    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
+      <i class="fa-solid fa-cog mr-3"></i>Settings
+    </button>
+    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
+      <i class="fa-solid fa-circle-question mr-3"></i>Help Center
+    </button>
+    <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded mt-auto">
+      <i class="fa-solid fa-sign-out-alt mr-3"></i>Logout
+    </button>
   </aside>
 
   <!-- Search Overlay -->
   <div id="searchOverlay" class="hidden flex">
     <div id="searchHeader">
-      <button onclick="closeSearchOverlay()" class="p-2 mr-2"><i class="fa-solid fa-arrow-left text-xl"></i></button>
+      <button onclick="closeSearchOverlay()" class="p-2 mr-2">
+        <i class="fa-solid fa-arrow-left text-xl"></i>
+      </button>
       <div class="relative flex-1">
-        <input id="overlaySearchInput" list="categoryList" type="search" placeholder="Search…"
+        <input id="overlaySearchInput" type="search" placeholder="Search…"
                class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-white placeholder-gray-400 focus:outline-none"/>
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-        <datalist id="categoryList">
-          <option value="Clubs & Orgs">
-          <option value="Business">
-          <option value="Other Projects">
-          <option value="Event">
-        </datalist>
       </div>
     </div>
+    <ul id="suggestions"></ul>
     <div class="overlayListings"></div>
   </div>
 
@@ -131,13 +128,17 @@
     <!-- Top Bar -->
     <div class="bar fixed top-0 left-0 right-0 flex items-center space-x-2 p-4"
          style="padding-top: env(safe-area-inset-top);">
-      <img src="https://i.imgur.com/zGz4RR3.jpeg" class="w-8 h-8 rounded-full cursor-pointer" onclick="openSidebar()"/>
+      <img src="https://i.imgur.com/zGz4RR3.jpeg"
+           class="w-8 h-8 rounded-full cursor-pointer" onclick="openSidebar()"/>
       <div class="relative flex-1">
-        <input readonly placeholder="Search…" class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-gray-400 cursor-text"
+        <input readonly placeholder="Search…"
+               class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-gray-400 cursor-text"
                onclick="openSearchOverlay()"/>
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600"></i>
       </div>
-      <button class="text-gray-400 hover:text-white p-2"><i class="fa-solid fa-pen-to-square text-2xl"></i></button>
+      <button class="text-gray-400 hover:text-white p-2">
+        <i class="fa-solid fa-pen-to-square text-2xl"></i>
+      </button>
     </div>
 
     <!-- Listings -->
@@ -192,12 +193,15 @@
         Then scroll down and tap <strong>"Add to Home Screen"</strong>, then hit <strong>Add</strong>.
       </p>
     </div>
-    <div onclick="hideOverlay()" class="cursor-pointer animate-bounce mb-8"><i class="fa-solid fa-arrow-up-from-bracket text-3xl text-gray-400 hover:text-white"></i></div>
+    <div onclick="hideOverlay()" class="cursor-pointer animate-bounce mb-8">
+      <i class="fa-solid fa-arrow-up-from-bracket text-3xl text-gray-400 hover:text-white"></i>
+    </div>
   </div>
 
   <script>
     let allProjects = [];
 
+    const categories = ['Clubs & Orgs','Business','Other Projects','Event'];
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches
                       || window.navigator.standalone === true;
 
@@ -247,7 +251,7 @@
     }
 
     function showCategory(typeKey) {
-      const map={'Clubs & Orgs':'Clubs','Business':'Businesses','Other Projects':'Projects','Event':'Events'};
+      const map = {'Clubs & Orgs':'Clubs','Business':'Businesses','Other Projects':'Projects','Event':'Events'};
       const c = document.getElementById('listings'); c.innerHTML = '';
       const h = document.createElement('h2');
       h.className = 'text-xl font-bold mt-4 mb-2 px-1'; h.textContent = map[typeKey]||typeKey;
@@ -256,14 +260,32 @@
     }
 
     function attachOverlaySearch() {
-      document.getElementById('overlaySearchInput').addEventListener('input', overlaySearch);
+      const inp = document.getElementById('overlaySearchInput');
+      inp.addEventListener('input', updateSuggestions);
+      inp.addEventListener('input', overlaySearch);
+    }
+
+    function updateSuggestions() {
+      const val = document.getElementById('overlaySearchInput').value.toLowerCase();
+      const list = document.getElementById('suggestions');
+      list.innerHTML = '';
+      if (!val) return;
+      categories.filter(c=>c.toLowerCase().includes(val)).forEach(c => {
+        const li = document.createElement('li');
+        li.textContent = c;
+        li.onclick = () => {
+          document.getElementById('overlaySearchInput').value = c;
+          list.innerHTML = '';
+          overlaySearch();
+        };
+        list.appendChild(li);
+      });
     }
 
     function overlaySearch() {
       const term = document.getElementById('overlaySearchInput').value.trim();
       const c = document.querySelector('#searchOverlay .overlayListings'); c.innerHTML = '';
-      const cats=['Clubs & Orgs','Business','Other Projects','Event'];
-      if (cats.includes(term)) {
+      if (categories.includes(term)) {
         allProjects.filter(p=>p['Project Type']===term).forEach(p=>c.appendChild(createCard(p)));
         return;
       }
@@ -275,28 +297,23 @@
       ).forEach(p=>c.appendChild(createCard(p)));
     }
 
-    function openSidebar() {
-      document.getElementById('sidebar').classList.add('open');
-      document.getElementById('sidebarOverlay').style.display = 'block';
-    }
-    function closeSidebar() {
-      document.getElementById('sidebar').classList.remove('open');
-      document.getElementById('sidebarOverlay').style.display = 'none';
-    }
+    function openSidebar(){ document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebarOverlay').style.display='block'; }
+    function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').style.display='none'; }
 
-    function openSearchOverlay() {
-      document.getElementById('searchOverlay').style.display = 'flex';
+    function openSearchOverlay(){
+      document.getElementById('searchOverlay').style.display='flex';
       document.getElementById('overlaySearchInput').focus();
     }
-    function closeSearchOverlay() {
-      document.getElementById('searchOverlay').style.display = 'none';
+    function closeSearchOverlay(){
+      document.getElementById('searchOverlay').style.display='none';
       document.getElementById('overlaySearchInput').value = '';
+      document.getElementById('suggestions').innerHTML = '';
       document.querySelector('#searchOverlay .overlayListings').innerHTML = '';
     }
 
-    function showOverlay() { document.getElementById('installOverlay').classList.remove('hidden'); }
-    function hideOverlay() { document.getElementById('installOverlay').classList.add('hidden'); }
-    function editProfile() { alert('Edit Profile clicked'); }
+    function showOverlay(){ document.getElementById('installOverlay').classList.remove('hidden'); }
+    function hideOverlay(){ document.getElementById('installOverlay').classList.add('hidden'); }
+    function editProfile(){ alert('Edit Profile clicked'); }
   </script>
 </body>
 </html>
