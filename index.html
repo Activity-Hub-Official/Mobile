@@ -16,10 +16,7 @@
 
   <!-- Tailwind & Font Awesome -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    rel="stylesheet"
-  />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
 
   <style>
     html, body {
@@ -38,108 +35,224 @@
       top: env(safe-area-inset-top);
       left: 0;
       bottom: 0;
-      width: min(80vw,16rem);
+      width: min(80vw, 16rem);
       transform: translateX(-100%);
       transition: transform .3s;
       z-index: 60;
       background: #2d3748;
       padding: 1rem;
       box-sizing: border-box;
-      display: flex; flex-direction: column;
+      display: flex;
+      flex-direction: column;
     }
     #sidebar.open { transform: translateX(0); }
     #sidebarOverlay {
-      position: fixed; inset: 0;
+      position: fixed;
+      inset: 0;
       background: rgba(0,0,0,0.5);
-      z-index: 55; display: none;
+      z-index: 55;
+      display: none;
     }
 
-    /* App shell listings */
+    /* Listings */
     #listings {
       flex: 1;
       width: 100%;
       overflow-y: auto;
+      scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
       margin-top: 4rem;
       padding: 0 1rem 4rem;
-      display: flex; flex-direction: column; gap: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
     }
 
     /* Search overlay */
     #searchOverlay {
-      position: fixed; inset: 0;
+      position: fixed;
+      inset: 0;
       background: #000;
-      display: none; flex-direction: column;
+      display: none;
+      flex-direction: column;
       z-index: 70;
     }
     #searchHeader {
       position: fixed;
       top: 0; left: 0; right: 0;
-      display: flex; align-items: center; gap: .5rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
       padding: env(safe-area-inset-top) 1rem 1rem;
-      background: #000; z-index: 71;
+      background: #000;
+      z-index: 71;
     }
     #searchMenu {
       margin-top: calc(env(safe-area-inset-top) + 3.5rem);
       background: #111827;
-      display: flex; flex-direction: column;
+      display: flex;
+      flex-direction: column;
     }
     #searchMenu button {
-      text-align: left; padding: .75rem 1rem;
-      color: #E5E7EB; background: transparent; border: none;
+      text-align: left;
+      padding: .75rem 1rem;
+      color: #E5E7EB;
+      background: transparent;
+      border: none;
     }
-    #searchMenu button:hover { background: #374151; }
+    #searchMenu button:hover {
+      background: #374151;
+    }
     .overlayListings {
       position: absolute;
-      top: calc(env(safe-area-inset-top) + 3.5rem + 5 * 2.5rem / 6); /* adjust if menu height changes */
+      top: calc(env(safe-area-inset-top) + 8rem);
       bottom: 0; left: 0; right: 0;
-      overflow-y: auto; -webkit-overflow-scrolling: touch;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
       padding: 1rem;
-      display: flex; flex-direction: column; gap: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
     }
     .search-btn {
-      position: absolute; right: .75rem; top: 50%;
-      transform: translateY(-50%); background: none; border: none;
+      position: absolute;
+      right: .75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
       color: #9CA3AF;
+    }
+    .search-btn:active {
+      color: #FFF;
     }
 
     /* Detail overlay */
     #detailOverlay {
-      position: fixed; inset: 0; background: #000;
-      display: none; flex-direction: column; z-index: 80;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: none;
+      flex-direction: column;
+      z-index: 80;
     }
     #detailHeader {
       position: fixed;
       top: 0; left: 0; right: 0;
-      display: flex; align-items: center; gap: .5rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
       padding: env(safe-area-inset-top) 1rem 1rem;
-      background: #000; z-index: 81;
+      background: #000;
+      z-index: 81;
     }
     #detailContent {
       margin-top: calc(env(safe-area-inset-top) + 3.5rem);
-      flex: 1; overflow-y: auto;
-      -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
       padding: 1rem;
-      display: flex; flex-direction: column; gap: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
     }
     #detailContent img {
-      width: 6rem; height: 6rem; object-fit: cover;
-      border-radius: .5rem; margin: 0 auto;
+      width: 6rem;
+      height: 6rem;
+      object-fit: cover;
+      border-radius: .5rem;
+      margin: 0 auto;
     }
     #detailContent h3 {
-      font-size: 1.25rem; font-weight: 600; text-align: center;
+      font-size: 1.25rem;
+      font-weight: 600;
+      text-align: center;
     }
-    #detailContent p { line-height: 1.5; color: #D1D5DB; }
-    .socials a {
-      margin-right: 1rem;
-      font-size: 1.5rem; color: #9CA3AF;
+    #detailContent p {
+      line-height: 1.5;
+      color: #D1D5DB;
     }
-    .socials a:hover { color: #FFF; }
-    #detailWebsite {
-      color: #3B82F6; text-align: center;
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      justify-content: center;
+    }
+    .tag {
+      font-size: .75rem;
       font-weight: 500;
+      padding: .25rem .5rem;
+      border-radius: .25rem;
+      color: white;
+    }
+    .tag.type     { background: #10B981; } /* Clubs */
+    .tag.business { background: #F59E0B; } /* Business */
+    .tag.project  { background: #8B5CF6; } /* Other Projects */
+    .tag.event    { background: #3B82F6; } /* Event */
+    .tag.industry { background: #EF4444; } /* Industry */
+    .tag.stage    { background: #14B8A6; } /* Stage */
+    .socials {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .socials a, .socials button {
+      font-size: 1.5rem;
+      color: #9CA3AF;
+      background: none;
+      border: none;
+    }
+    .socials a:hover, .socials button:hover {
+      color: #FFF;
+    }
+
+    /* Overflow modal */
+    #modalOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 85;
+    }
+    #modalContent {
+      background: #111827;
+      padding: 1rem;
+      border-radius: .5rem;
+      max-width: 90%;
+      max-height: 80%;
+      overflow-y: auto;
+      position: relative;
+    }
+    #modalContent h3 {
+      margin-bottom: .5rem;
+      color: #E5E7EB;
+      text-align: center;
+    }
+    #modalContent ul {
+      list-style: none;
+      padding: 0;
+    }
+    #modalContent li {
+      margin: .5rem 0;
+    }
+    #modalContent a {
+      color: #3B82F6;
+      word-break: break-all;
+    }
+    #modalClose {
+      position: absolute;
+      top: .5rem;
+      right: .5rem;
+      font-size: 1.5rem;
+      color: #E5E7EB;
+      background: none;
+      border: none;
     }
   </style>
 </head>
@@ -181,7 +294,7 @@
   </aside>
 
   <!-- Search Overlay -->
-  <div id="searchOverlay" class="hidden flex">
+  <div id="searchOverlay" class="hidden flex flex-col">
     <div id="searchHeader">
       <button onclick="closeSearchOverlay()" class="p-2 mr-2">
         <i class="fa-solid fa-arrow-left text-xl"></i>
@@ -208,7 +321,7 @@
   </div>
 
   <!-- Detail Overlay -->
-  <div id="detailOverlay" class="hidden flex">
+  <div id="detailOverlay" class="hidden flex flex-col">
     <div id="detailHeader">
       <button onclick="closeDetail()" class="p-2 mr-2">
         <i class="fa-solid fa-arrow-left text-xl"></i>
@@ -218,30 +331,36 @@
     <div id="detailContent">
       <img id="detailLogo" src="" alt="Logo"/>
       <h3 id="detailTitle2"></h3>
+      <p id="detailSchool" class="text-gray-400 text-sm text-center"></p>
+      <div class="tags" id="detailTags"></div>
       <p id="detailDesc"></p>
       <p id="detailMembers" class="text-gray-400"></p>
-      <div class="socials flex flex-wrap"></div>
-      <a id="detailWebsite" href="#" target="_blank"></a>
+      <div class="socials" id="detailSocials"></div>
     </div>
   </div>
 
-  <!-- App Shell -->
+  <!-- Overflow Modal -->
+  <div id="modalOverlay" class="hidden flex items-center justify-center">
+    <div id="modalContent">
+      <button id="modalClose" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+      <h3>All Links</h3>
+      <ul id="modalList"></ul>
+    </div>
+  </div>
+
+  <!-- PWA Shell -->
   <div id="pwaShell" class="hidden absolute inset-0 flex flex-col h-screen">
     <!-- Top Bar -->
     <div class="bar fixed top-0 left-0 right-0 flex items-center space-x-2 p-4"
-         style="padding-top: env(safe-area-inset-top)">
-      <img
-        src="https://i.imgur.com/zGz4RR3.jpeg"
-        class="w-8 h-8 rounded-full cursor-pointer"
-        onclick="openSidebar()"
-      />
+         style="padding-top: env(safe-area-inset-top);">
+      <img src="https://i.imgur.com/zGz4RR3.jpeg"
+           class="w-8 h-8 rounded-full cursor-pointer"
+           onclick="openSidebar()"/>
       <div class="relative flex-1">
-        <input
-          readonly
-          placeholder="Search…"
-          class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-gray-400 cursor-text"
-          onclick="openSearchOverlay()"
-        />
+        <input readonly
+               placeholder="Search…"
+               class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-gray-400 cursor-text"
+               onclick="openSearchOverlay()"/>
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600"></i>
       </div>
       <button class="text-gray-400 hover:text-white p-2">
@@ -282,16 +401,12 @@
       <p class="mt-3 text-gray-300 text-sm">Try the new mobile experience of Activity Hub</p>
     </header>
     <div class="my-8">
-      <img
-        src="https://via.placeholder.com/250x500?text=Activity+Hub+Preview"
-        class="rounded-xl shadow-xl max-w-[250px]"
-      />
+      <img src="https://via.placeholder.com/250x500?text=Activity+Hub+Preview"
+           class="rounded-xl shadow-xl max-w-[250px]"/>
     </div>
     <div class="w-full text-center">
-      <button
-        onclick="showOverlay()"
-        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full shadow-lg"
-      >
+      <button onclick="showOverlay()"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full shadow-lg">
         Try Activity Hub Now
       </button>
       <p class="mt-3 text-sm text-gray-400">No download needed. Works right in your browser.</p>
@@ -300,17 +415,13 @@
   </div>
 
   <!-- Add to Home Screen Overlay -->
-  <div
-    id="installOverlay"
-    class="hidden fixed inset-0 bg-black bg-opacity-90 text-white flex flex-col justify-between items-center p-6 z-30"
-  >
+  <div id="installOverlay" class="hidden fixed inset-0 bg-black bg-opacity-90 text-white flex flex-col justify-between items-center p-6 z-30">
     <div class="max-w-sm text-center mt-16">
       <i class="fa-solid fa-arrow-up-from-bracket text-4xl mb-4 text-blue-400"></i>
       <h2 class="text-2xl font-semibold mb-3">Add to Home Screen</h2>
       <p class="text-sm mb-6 text-gray-300 leading-relaxed">
-        Tap the <i class="fa-solid fa-arrow-up-from-bracket text-lg text-white"></i> icon at the bottom of
-        your Safari screen.<br/><br/>Then scroll down and tap <strong>"Add to Home Screen"</strong>, then hit
-        <strong>Add</strong>.
+        Tap the <i class="fa-solid fa-arrow-up-from-bracket text-lg text-white"></i> icon at the bottom of your Safari screen.<br/><br/>
+        Then scroll down and tap <strong>"Add to Home Screen"</strong>, then hit <strong>Add</strong>.
       </p>
     </div>
     <div onclick="hideOverlay()" class="cursor-pointer animate-bounce mb-8">
@@ -390,9 +501,9 @@
     function showCategory(typeKey) {
       const map = {
         'Clubs & Orgs': 'Clubs',
-        Business: 'Businesses',
+        'Business': 'Businesses',
         'Other Projects': 'Projects',
-        Event: 'Events'
+        'Event': 'Events'
       };
       const c = document.getElementById('listings');
       c.innerHTML = '';
@@ -426,10 +537,6 @@
       document.getElementById('overlaySearchInput').value = '';
       const c = document.querySelector('#searchOverlay .overlayListings');
       c.innerHTML = '';
-      if (typeKey === 'Event') {
-        c.innerHTML = '<p class="text-gray-400 p-4">Event search not yet implemented.</p>';
-        return;
-      }
       allProjects
         .filter(p => p['Project Type'] === typeKey)
         .forEach(p => c.appendChild(createCard(p)));
@@ -466,40 +573,72 @@
     function openDetail(p) {
       document.getElementById('detailTitle').textContent = p['Project Title'];
       document.getElementById('detailTitle2').textContent = p['Project Title'];
+      document.getElementById('detailSchool').textContent = p['College or University Name'];
       document.getElementById('detailLogo').src = p['Logo URL'];
       document.getElementById('detailDesc').textContent = p.Description;
-      document.getElementById('detailMembers').textContent = `Participants: ${p['Number of participants']}`;
-      const socials = document.querySelector('#detailContent .socials');
-      socials.innerHTML = '';
-      const fields = ['Instagram','LinkedIn','YouTube','TikTok','GitHub','Discord','GroupMe','Twitter'];
-      fields.forEach(key => {
-        if (p[key]) {
-          const a = document.createElement('a');
-          a.href = p[key]; a.target = '_blank';
-          const iconMap = {
-            Instagram: 'fa-instagram',
-            LinkedIn: 'fa-linkedin',
-            YouTube: 'fa-youtube',
-            TikTok: 'fa-tiktok',
-            GitHub: 'fa-github',
-            Discord: 'fa-discord',
-            GroupMe: 'fa-comment',
-            Twitter: 'fa-twitter',
-          };
-          a.innerHTML = `<i class="fab ${iconMap[key]}"></i>`;
-          socials.appendChild(a);
+      document.getElementById('detailMembers').textContent =
+        `Participants: ${p['Number of participants']}`;
+
+      // Tags
+      const tagsEl = document.getElementById('detailTags');
+      tagsEl.innerHTML = '';
+      const tagData = [
+        { key: p['Project Type'], cls: 'type' },
+        { key: p['Business Type'], cls: 'business' },
+        { key: p.Industry, cls: 'industry' },
+        { key: p.Stage, cls: 'stage' }
+      ];
+      tagData.forEach(t => {
+        if (t.key) {
+          const span = document.createElement('span');
+          span.className = `tag ${t.cls}`;
+          span.textContent = t.key;
+          tagsEl.appendChild(span);
         }
       });
-      const site = document.getElementById('detailWebsite');
-      if (p.Website) {
-        site.href = p.Website; site.textContent = p.Website; site.style.display = 'block';
-      } else {
-        site.style.display = 'none';
+
+      // Socials + website
+      const socialsEl = document.getElementById('detailSocials');
+      socialsEl.innerHTML = '';
+      const linkKeys = ['Website','Instagram','LinkedIn','YouTube','TikTok','GitHub','Discord','GroupMe','Twitter'];
+      const entries = linkKeys.map(key => ({ key, url: p[key] })).filter(e => e.url);
+      if (p.Website) entries.unshift({ key: 'Website', url: p.Website });
+      entries.slice(0, 4).forEach(e => {
+        const a = document.createElement('a');
+        a.href = e.url; a.target = '_blank';
+        const iconMap = {
+          Instagram:'fa-instagram', LinkedIn:'fa-linkedin', YouTube:'fa-youtube',
+          TikTok:'fa-tiktok', GitHub:'fa-github', Discord:'fa-discord',
+          GroupMe:'fa-comment', Twitter:'fa-twitter', Website:'fa-globe'
+        };
+        a.innerHTML = `<i class="fab ${iconMap[e.key] || 'fa-link'}"></i>`;
+        socialsEl.appendChild(a);
+      });
+      if (entries.length > 4) {
+        const more = document.createElement('button');
+        more.textContent = `+${entries.length - 4} more`;
+        more.onclick = () => openModal(entries);
+        socialsEl.appendChild(more);
       }
+
       document.getElementById('detailOverlay').style.display = 'flex';
     }
     function closeDetail() {
       document.getElementById('detailOverlay').style.display = 'none';
+    }
+
+    function openModal(entries) {
+      const list = document.getElementById('modalList');
+      list.innerHTML = '';
+      entries.forEach(e => {
+        const li = document.createElement('li');
+        li.innerHTML = `<strong>${e.key}</strong>: <a href="${e.url}" target="_blank">${e.url}</a>`;
+        list.appendChild(li);
+      });
+      document.getElementById('modalOverlay').style.display = 'flex';
+    }
+    function closeModal() {
+      document.getElementById('modalOverlay').style.display = 'none';
     }
 
     function showOverlay() {
@@ -508,7 +647,9 @@
     function hideOverlay() {
       document.getElementById('installOverlay').classList.add('hidden');
     }
-    function editProfile() { alert('Edit Profile clicked'); }
+    function editProfile() {
+      alert('Edit Profile clicked');
+    }
   </script>
 </body>
 </html>
