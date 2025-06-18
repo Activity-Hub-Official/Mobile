@@ -2,7 +2,8 @@
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
   <title>Activity Hub PWA</title>
 
   <!-- PWA manifest & meta -->
@@ -18,6 +19,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
 
   <style>
+    /* Base */
     html, body {
       height: 100%;
       margin: 0;
@@ -26,7 +28,9 @@
       touch-action: manipulation;
       background: #000;
     }
-    /* Sidebar off-canvas */
+    .bar { background: #000; z-index: 50; }
+
+    /* Sidebar */
     #sidebar {
       position: fixed; top: 0; left: 0; bottom: 0;
       width: 16rem;
@@ -40,37 +44,39 @@
     #sidebar.open { transform: translateX(0); }
     #sidebarOverlay {
       position: fixed; inset: 0;
-      background: rgba(0,0,0,0.5); z-index: 55;
+      background: rgba(0,0,0,0.5);
+      z-index: 55;
       display: none;
     }
-    /* Main listings */
+
+    /* PWA listings */
     #listings {
-      flex: 1; width: 100%; overflow-y: auto;
+      flex: 1;
+      width: 100%;
+      overflow-y: auto;
       scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
-      margin-top: 4rem; padding: 0 1rem 4rem;
+      margin-top: 4rem;
+      padding: 0 1rem 4rem;
       display: flex; flex-direction: column; gap: 1rem;
     }
-    .bar { background: #000; z-index: 50; }
+
     /* Search overlay */
     #searchOverlay {
-      position: fixed; inset: 0; background: #000;
-      display: none; flex-direction: column; z-index: 70;
+      position: fixed; inset: 0;
+      background: #000;
+      display: none;
+      flex-direction: column;
+      z-index: 70;
     }
     #searchHeader {
-      position: fixed; top: 0; left: 0; right: 0;
-      display: flex; align-items: center; gap: .5rem;
       padding: calc(env(safe-area-inset-top)+1rem) 1rem 1rem;
-      background: #000; z-index: 71;
+      display: flex; align-items: center; gap: .5rem;
     }
     #searchMenu {
-      position: absolute;
-      top: calc(env(safe-area-inset-top) + 3.5rem);
-      left: 0; right: 0;
       background: #111827;
       display: flex; flex-direction: column;
-      z-index: 72;
     }
     #searchMenu button {
       text-align: left;
@@ -82,21 +88,19 @@
     #searchMenu button:hover {
       background: #374151;
     }
-    #searchOverlay .overlayListings {
-      position: absolute;
-      top: calc(env(safe-area-inset-top) + 6rem);
-      bottom: 0; left: 0; right: 0;
+    .overlayListings {
+      flex: 1;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
       display: flex; flex-direction: column; gap: 1rem;
-      padding: 0 1rem env(safe-area-inset-bottom);
+      padding: 1rem 1rem env(safe-area-inset-bottom);
     }
   </style>
 </head>
 <body class="relative text-white h-screen">
 
-  <!-- Sidebar and overlay -->
+  <!-- Sidebar & backdrop -->
   <div id="sidebarOverlay" onclick="closeSidebar()"></div>
   <aside id="sidebar">
     <div class="flex items-center space-x-3 mb-4">
@@ -132,17 +136,23 @@
   </aside>
 
   <!-- Search Overlay -->
-  <div id="searchOverlay" class="flex hidden">
+  <div id="searchOverlay" class="hidden flex">
+    <!-- Header -->
     <div id="searchHeader">
       <button onclick="closeSearchOverlay()" class="p-2 mr-2">
         <i class="fa-solid fa-arrow-left text-xl"></i>
       </button>
       <div class="relative flex-1">
-        <input id="overlaySearchInput" type="search" placeholder="Search…"
-               class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-white focus:outline-none"/>
+        <input id="overlaySearchInput"
+               type="search"
+               placeholder="Search…"
+               class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-white focus:outline-none"
+               onkeydown="handleSearchKey(event)"/>
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
       </div>
     </div>
+
+    <!-- Menu -->
     <div id="searchMenu">
       <button onclick="overlayCategory('Clubs & Orgs')">Search Clubs</button>
       <button onclick="overlayCategory('Business')">Search Businesses</button>
@@ -150,6 +160,8 @@
       <button onclick="overlayPeople()">Search People</button>
       <button onclick="overlayCategory('Event')">Search Events</button>
     </div>
+
+    <!-- Results -->
     <div class="overlayListings"></div>
   </div>
 
@@ -163,7 +175,8 @@
            class="w-8 h-8 rounded-full cursor-pointer"
            onclick="openSidebar()"/>
       <div class="relative flex-1">
-        <input readonly placeholder="Search…"
+        <input readonly
+               placeholder="Search…"
                class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-gray-400 cursor-text"
                onclick="openSearchOverlay()"/>
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600"></i>
@@ -246,7 +259,7 @@
       if (isStandalone) {
         document.getElementById('mainContent').classList.add('hidden');
         document.getElementById('pwaShell').classList.remove('hidden');
-        fetchProjects().then(() => { showHome(); attachOverlaySearch(); });
+        fetchProjects().then(() => { showHome(); });
       }
     });
 
@@ -313,14 +326,15 @@
         .forEach(p => c.appendChild(createCard(p)));
     }
 
-    function attachOverlaySearch() {
-      document.getElementById('overlaySearchInput')
-              .addEventListener('input', overlaySearch);
+    function handleSearchKey(e) {
+      if (e.key === 'Enter') {
+        overlaySearch();
+      }
     }
 
     function overlaySearch() {
       const term = document.getElementById('overlaySearchInput').value.trim();
-      document.getElementById('searchMenu').style.display = term ? 'none' : 'flex';
+      document.getElementById('searchMenu').style.display = 'none';
       const c = document.querySelector('#searchOverlay .overlayListings');
       c.innerHTML = '';
       if (!term) return;
