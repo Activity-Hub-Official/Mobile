@@ -22,41 +22,53 @@
   />
 
   <style>
-    /* Disable all scrolling rubber-band and bounce */
+    /* Disable rubber-band bouncing and pinch-zoom */
     html, body {
-      height:100%; overflow:hidden;
+      height: 100%;
+      overflow: hidden;
       overscroll-behavior: none;
       touch-action: manipulation;
-      background:#000;
+      background: #000;
     }
     /* Sidebar off-canvas */
     #sidebar {
-      position:fixed; top:0; left:0; bottom:0;
-      width:16rem;
-      transform:translateX(-100%);
-      transition:transform .3s;
-      z-index:60;
-      background:#2d3748;
-      padding:calc(env(safe-area-inset-top)+1rem) 1rem 1rem;
-      display:flex; flex-direction:column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: 16rem;
+      transform: translateX(-100%);
+      transition: transform .3s ease-in-out;
+      z-index: 60;
+      background: #2d3748;
+      padding: calc(env(safe-area-inset-top) + 1rem) 1rem 1rem;
+      display: flex;
+      flex-direction: column;
     }
-    #sidebar.open { transform:translateX(0); }
+    #sidebar.open {
+      transform: translateX(0);
+    }
+    /* Overlay behind sidebar */
     #sidebarOverlay {
-      position:fixed; inset:0;
-      background:rgba(0,0,0,0.5); z-index:55;
-      display:none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 55;
+      display: none;
     }
-    /* Listings: smooth, momentum scrolling */
+    /* Smooth, momentum scrolling within listings */
     #listings {
-      flex:1; width:100%; overflow-y:auto;
-      scroll-behavior:smooth;
-      -webkit-overflow-scrolling:touch;
+      flex: 1;
+      width: 100%;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
-      margin-top:4rem;
-      padding:0 1rem 4rem;
+      margin-top: 4rem;
+      padding: 0 1rem 4rem;
     }
-    /* Top & bottom bars opaque */
-    .bar { background:black; }
+    /* Opaque bars */
+    .bar {
+      background: #000;
+    }
   </style>
 </head>
 <body class="relative text-white h-screen overflow-hidden">
@@ -67,48 +79,73 @@
   <!-- Sidebar -->
   <aside id="sidebar">
     <div class="flex items-center space-x-3 mb-4">
-      <img src="https://i.imgur.com/zGz4RR3.jpeg" alt="Profile" class="w-10 h-10 rounded-full"/>
+      <img src="https://i.imgur.com/zGz4RR3.jpeg" alt="Profile" class="w-10 h-10 rounded-full" />
       <div class="flex-1">
         <p class="font-medium">Saeed Khan</p>
-        <button class="text-xs text-gray-400 hover:text-gray-200 mt-1" onclick="editProfile()">Edit Profile</button>
+        <button class="text-xs text-gray-400 hover:text-gray-200 mt-1" onclick="editProfile()">
+          Edit Profile
+        </button>
       </div>
     </div>
-    <hr class="border-gray-700 my-2"/>
+
+    <hr class="border-gray-700 my-2" />
+
     <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
-      <i class="fa-solid fa-star mr-3"></i>Activities Being Followed
+      <i class="fa-solid fa-star mr-3"></i>
+      Activities Being Followed
     </button>
-    <hr class="border-gray-700 my-2"/>
+
+    <hr class="border-gray-700 my-2" />
+
     <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
-      <i class="fa-solid fa-clipboard-list mr-3"></i>Your Activities
+      <i class="fa-solid fa-clipboard-list mr-3"></i>
+      Your Activities
       <span class="ml-auto text-xs bg-blue-600 px-2 py-0.5 rounded-full">Admin</span>
     </button>
-    <hr class="border-gray-700 my-2"/>
+
+    <hr class="border-gray-700 my-2" />
+
     <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
-      <i class="fa-solid fa-qrcode mr-3"></i>QR Code Sign-In
+      <i class="fa-solid fa-qrcode mr-3"></i>
+      QR Code Sign-In
     </button>
-    <hr class="border-gray-700 my-2"/>
+
+    <hr class="border-gray-700 my-2" />
+
     <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
-      <i class="fa-solid fa-cog mr-3"></i>Settings
+      <i class="fa-solid fa-cog mr-3"></i>
+      Settings
     </button>
+
     <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded">
-      <i class="fa-solid fa-circle-question mr-3"></i>Help Center
+      <i class="fa-solid fa-circle-question mr-3"></i>
+      Help Center
     </button>
+
     <button class="flex items-center w-full py-2 hover:bg-gray-700 rounded mt-auto">
-      <i class="fa-solid fa-sign-out-alt mr-3"></i>Logout
+      <i class="fa-solid fa-sign-out-alt mr-3"></i>
+      Logout
     </button>
   </aside>
 
-  <!-- PWA Shell (Standalone) -->
+  <!-- PWA Shell -->
   <div id="pwaShell" class="hidden absolute inset-0 flex flex-col items-center justify-start z-40 h-screen overflow-hidden">
 
     <!-- Top Bar -->
     <div class="bar absolute top-0 left-0 right-0 flex items-center space-x-3 p-4"
-         style="padding-top:env(safe-area-inset-top);">
-      <img src="https://i.imgur.com/zGz4RR3.jpeg" alt="Profile"
-           class="w-8 h-8 rounded-full cursor-pointer" onclick="openSidebar()"/>
+         style="padding-top: env(safe-area-inset-top);">
+      <img
+        src="https://i.imgur.com/zGz4RR3.jpeg"
+        alt="Profile"
+        class="w-8 h-8 rounded-full cursor-pointer"
+        onclick="openSidebar()"
+      />
       <div class="relative flex-1">
-        <input type="search" placeholder="Search…"
-               class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-white placeholder-gray-400 focus:outline-none"/>
+        <input
+          type="search"
+          placeholder="Search…"
+          class="w-full pl-10 pr-3 py-2 rounded-full bg-gray-800 text-white placeholder-gray-400 focus:outline-none"
+        />
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
       </div>
       <button class="text-gray-400 hover:text-white p-2">
@@ -117,27 +154,30 @@
     </div>
 
     <!-- Listings Container -->
-    <div id="listings" class="w-full max-w-md">
-      <!-- Cards injected here -->
-    </div>
+    <div id="listings" class="w-full max-w-md"></div>
 
     <!-- Bottom Tabs -->
     <nav class="bar absolute bottom-0 left-0 right-0 flex justify-around py-3"
-         style="padding-bottom:env(safe-area-inset-bottom);">
+         style="padding-bottom: env(safe-area-inset-bottom);">
       <button onclick="showHome()" class="flex flex-col items-center text-gray-400 hover:text-white">
-        <i class="fa-solid fa-home text-xl"></i><span class="text-xs mt-1">Home</span>
+        <i class="fa-solid fa-home text-xl"></i>
+        <span class="text-xs mt-1">Home</span>
       </button>
       <button onclick="showCategory('Clubs & Orgs')" class="flex flex-col items-center text-gray-400 hover:text-white">
-        <i class="fa-solid fa-users text-xl"></i><span class="text-xs mt-1">Clubs</span>
+        <i class="fa-solid fa-users text-xl"></i>
+        <span class="text-xs mt-1">Clubs</span>
       </button>
       <button onclick="showCategory('Business')" class="flex flex-col items-center text-gray-400 hover:text-white">
-        <i class="fa-solid fa-briefcase text-xl"></i><span class="text-xs mt-1">Businesses</span>
+        <i class="fa-solid fa-briefcase text-xl"></i>
+        <span class="text-xs mt-1">Businesses</span>
       </button>
       <button onclick="showCategory('Other Projects')" class="flex flex-col items-center text-gray-400 hover:text-white">
-        <i class="fa-solid fa-folder-open text-xl"></i><span class="text-xs mt-1">Projects</span>
+        <i class="fa-solid fa-folder-open text-xl"></i>
+        <span class="text-xs mt-1">Projects</span>
       </button>
       <a href="#" class="flex flex-col items-center text-gray-400 hover:text-white">
-        <i class="fa-solid fa-calendar-alt text-xl"></i><span class="text-xs mt-1">Events</span>
+        <i class="fa-solid fa-calendar-alt text-xl"></i>
+        <span class="text-xs mt-1">Events</span>
       </a>
     </nav>
   </div>
@@ -145,22 +185,30 @@
   <!-- Normal “Try Activity Hub” Page -->
   <div id="mainContent" class="flex flex-col items-center justify-between w-full max-w-sm mx-auto h-screen p-4 overflow-hidden">
     <header class="text-center mt-8">
-      <h1 class="text-3xl font-bold leading-tight">Discover, Connect, & Launch<br/>Your Campus Journey</h1>
+      <h1 class="text-3xl font-bold leading-tight">
+        Discover, Connect, & Launch<br/>Your Campus Journey
+      </h1>
       <p class="mt-3 text-gray-300 text-sm">Try the new mobile experience of Activity Hub</p>
     </header>
     <div class="my-8">
-      <img src="https://via.placeholder.com/250x500?text=Activity+Hub+Preview"
-           alt="App Preview"
-           class="rounded-xl shadow-xl max-w-[250px]"/>
+      <img
+        src="https://via.placeholder.com/250x500?text=Activity+Hub+Preview"
+        alt="App Preview"
+        class="rounded-xl shadow-xl max-w-[250px]"
+      />
     </div>
     <div class="w-full text-center">
-      <button onclick="showOverlay()"
-              class="bg-blue-600 hover:bg-blue-700 transition duration-200 text-white font-semibold py-3 px-6 rounded-full text-lg shadow-lg">
+      <button
+        onclick="showOverlay()"
+        class="bg-blue-600 hover:bg-blue-700 transition duration-200 text-white font-semibold py-3 px-6 rounded-full text-lg shadow-lg"
+      >
         Try Activity Hub Now
       </button>
       <p class="mt-3 text-sm text-gray-400">No download needed. Works right in your browser.</p>
     </div>
-    <footer class="mt-12 text-xs text-gray-500 text-center">&copy; 2025 Activity Hub. All rights reserved.</footer>
+    <footer class="mt-12 text-xs text-gray-500 text-center">
+      &copy; 2025 Activity Hub. All rights reserved.
+    </footer>
   </div>
 
   <!-- Add to Home Screen Overlay -->
@@ -179,10 +227,11 @@
     </div>
   </div>
 
+
   <script>
     let allProjects = [];
 
-    // Standalone detection
+    // Detect standalone
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches
                       || window.navigator.standalone === true;
 
@@ -190,21 +239,21 @@
       if (isStandalone) {
         document.getElementById('mainContent').classList.add('hidden');
         document.getElementById('pwaShell').classList.remove('hidden');
-        fetchProjects().then(() => showHome());
+        fetchProjects().then(showHome);
       }
     });
 
-    // Fetch data
+    // Fetch projects from API
     async function fetchProjects() {
       try {
         const res = await fetch('https://sheet2api.com/v1/an4oVvpQR51V/mock-data-new');
         allProjects = await res.json();
-      } catch(e) {
-        console.error('Fetch error', e);
+      } catch (e) {
+        console.error('Failed to fetch projects', e);
       }
     }
 
-    // Render helpers
+    // Create a project card element
     function createCard(p) {
       const div = document.createElement('div');
       div.className = 'bg-gray-900 rounded-lg p-4 flex space-x-4';
@@ -220,19 +269,20 @@
       return div;
     }
 
+    // Show homepage with 3 per category
     function showHome() {
+      const groups = [
+        { title: 'Clubs', key: 'Clubs & Orgs' },
+        { title: 'Businesses', key: 'Business' },
+        { title: 'Projects', key: 'Other Projects' }
+      ];
       const container = document.getElementById('listings');
       container.innerHTML = '';
-      const groups = [
-        { title: 'Clubs',      key: 'Clubs & Orgs' },
-        { title: 'Businesses', key: 'Business' },
-        { title: 'Projects',   key: 'Other Projects' }
-      ];
       groups.forEach(g => {
-        const heading = document.createElement('h2');
-        heading.className = 'text-xl font-bold mt-4 mb-2 px-1';
-        heading.textContent = g.title;
-        container.appendChild(heading);
+        const h = document.createElement('h2');
+        h.className = 'text-xl font-bold mt-4 mb-2 px-1';
+        h.textContent = g.title;
+        container.appendChild(h);
         allProjects
           .filter(p => p['Project Type'] === g.key)
           .slice(0, 3)
@@ -240,18 +290,19 @@
       });
     }
 
+    // Show full category list
     function showCategory(typeKey) {
-      const container = document.getElementById('listings');
-      container.innerHTML = '';
       const titleMap = {
         'Clubs & Orgs': 'Clubs',
-        'Business':     'Businesses',
-        'Other Projects':'Projects'
+        'Business': 'Businesses',
+        'Other Projects': 'Projects'
       };
-      const heading = document.createElement('h2');
-      heading.className = 'text-xl font-bold mt-4 mb-2 px-1';
-      heading.textContent = titleMap[typeKey] || typeKey;
-      container.appendChild(heading);
+      const container = document.getElementById('listings');
+      container.innerHTML = '';
+      const h = document.createElement('h2');
+      h.className = 'text-xl font-bold mt-4 mb-2 px-1';
+      h.textContent = titleMap[typeKey] || typeKey;
+      container.appendChild(h);
       allProjects
         .filter(p => p['Project Type'] === typeKey)
         .forEach(p => container.appendChild(createCard(p)));
@@ -275,20 +326,7 @@
       document.getElementById('installOverlay').classList.add('hidden');
     }
 
-    // Theme toggle
-    const toggle = document.getElementById('themeToggle');
-    if (toggle) {
-      toggle.checked = document.documentElement.classList.contains('dark');
-      toggle.addEventListener('change', () => {
-        document.documentElement.classList.toggle('dark', toggle.checked);
-        localStorage.theme = toggle.checked ? 'dark' : 'light';
-        document.querySelector('.dot').classList.toggle('translate-x-4');
-      });
-      if (localStorage.theme === 'light') toggle.checked = false;
-      else toggle.checked = true;
-      document.querySelector('.dot').classList.toggle('translate-x-4', toggle.checked);
-    }
-
+    // Stub for edit profile
     function editProfile() {
       alert('Edit Profile clicked');
     }
